@@ -1,0 +1,64 @@
+{
+  "id": "global-collab",
+  "name": "Global Collaboration",
+  "description": "多时区协作、多语言/自动翻译（三层翻译体系）、人机无缝交接（通知、在线状态、@human 提及）",
+  "version": "0.1.0",
+  "author": "Jigong",
+  "hooks": [
+    "issue:created",
+    "issue:assigned",
+    "issue:status_changed",
+    "issue:comment.created",
+    "agent:heartbeat"
+  ],
+  "routes": {
+    "prefix": "/global-collab",
+    "entry": "./src/routes.ts"
+  },
+  "ui": {
+    "pages": [
+      {
+        "path": "/collaboration",
+        "label": "Collaboration",
+        "entry": "./src/ui/index.ts"
+      }
+    ],
+    "widgets": [
+      {
+        "id": "presence-status",
+        "label": "Team Presence",
+        "placement": "dashboard",
+        "entry": "./src/ui/index.ts"
+      },
+      {
+        "id": "unread-notifications",
+        "label": "Notifications",
+        "placement": "dashboard",
+        "entry": "./src/ui/index.ts"
+      }
+    ]
+  },
+  "schema": "./src/schema.ts",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "defaultLocale": { "type": "string", "default": "en" },
+      "supportedLocales": {
+        "type": "array",
+        "items": { "type": "string" },
+        "default": ["en", "zh-CN", "ja", "ko", "es", "fr", "de", "pt-BR"]
+      },
+      "translationProvider": {
+        "type": "string",
+        "enum": ["openai", "deepl", "google"],
+        "default": "openai"
+      },
+      "translationApiKey": { "type": "string", "default": "" },
+      "presenceAwayThresholdMs": { "type": "number", "default": 30000 },
+      "presenceOfflineThresholdMs": { "type": "number", "default": 120000 }
+    }
+  },
+  "requires": {
+    "core": ">=0.1.0"
+  }
+}

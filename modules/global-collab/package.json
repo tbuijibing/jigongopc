@@ -1,0 +1,30 @@
+{
+  "name": "@jigongai/mod-global-collab",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@jigongai/db": "workspace:*",
+    "@jigongai/shared": "workspace:*",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "drizzle-orm": "^0.40.0",
+    "express": "^5.1.0",
+    "i18next": "^24.2.2",
+    "react-i18next": "^15.4.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.17",
+    "@types/react": "^19.1.2",
+    "fast-check": "^4.1.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "collaboration": {
+    "title": "协作",
+    "tabs": {
+      "notifications": "通知",
+      "language": "语言",
+      "timezone": "时区",
+      "presence": "在线状态"
+    }
+  },
+  "notifications": {
+    "title": "通知中心",
+    "empty": "暂无通知",
+    "unreadOnly": "仅未读",
+    "markAllRead": "全部标为已读",
+    "markRead": "标为已读",
+    "unreadCount": "{{count}} 条未读",
+    "types": {
+      "mention": "提及",
+      "assignment": "分配",
+      "status_change": "状态变更",
+      "comment": "评论",
+      "handoff_request": "交接请求"
+    },
+    "widget": {
+      "title": "通知",
+      "noUnread": "没有未读通知",
+      "viewAll": "查看全部"
+    }
+  },
+  "language": {
+    "title": "语言设置",
+    "current": "当前语言",
+    "select": "选择语言",
+    "saved": "语言已保存"
+  },
+  "timezone": {
+    "title": "时区设置",
+    "current": "当前时区",
+    "select": "选择时区",
+    "dateFormat": "日期格式",
+    "dateFormats": {
+      "relative": "相对时间（如 3小时前）",
+      "absolute": "绝对时间（如 2024-01-15 14:30 CST）",
+      "both": "两者兼有"
+    },
+    "saved": "时区设置已保存"
+  },
+  "presence": {
+    "title": "团队在线状态",
+    "online": "在线",
+    "away": "离开",
+    "offline": "离线",
+    "members": "{{count}} 位成员",
+    "widget": {
+      "title": "团队在线状态",
+      "onlineCount": "{{count}} 人在线",
+      "awayCount": "{{count}} 人离开",
+      "offlineCount": "{{count}} 人离线"
+    }
+  },
+  "translation": {
+    "translate": "翻译",
+    "translating": "翻译中...",
+    "stale": "原文已更新",
+    "error": "翻译失败",
+    "retry": "重试"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "loading": "加载中...",
+    "error": "发生错误",
+    "retry": "重试"
+  }
+}

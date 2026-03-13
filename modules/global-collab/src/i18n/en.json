@@ -1,0 +1,76 @@
+{
+  "collaboration": {
+    "title": "Collaboration",
+    "tabs": {
+      "notifications": "Notifications",
+      "language": "Language",
+      "timezone": "Timezone",
+      "presence": "Presence"
+    }
+  },
+  "notifications": {
+    "title": "Notification Center",
+    "empty": "No notifications",
+    "unreadOnly": "Unread only",
+    "markAllRead": "Mark all read",
+    "markRead": "Mark read",
+    "unreadCount": "{{count}} unread",
+    "types": {
+      "mention": "Mention",
+      "assignment": "Assignment",
+      "status_change": "Status Change",
+      "comment": "Comment",
+      "handoff_request": "Handoff Request"
+    },
+    "widget": {
+      "title": "Notifications",
+      "noUnread": "No unread notifications",
+      "viewAll": "View all"
+    }
+  },
+  "language": {
+    "title": "Language Settings",
+    "current": "Current language",
+    "select": "Select language",
+    "saved": "Language saved"
+  },
+  "timezone": {
+    "title": "Timezone Settings",
+    "current": "Current timezone",
+    "select": "Select timezone",
+    "dateFormat": "Date format",
+    "dateFormats": {
+      "relative": "Relative (e.g. 3 hours ago)",
+      "absolute": "Absolute (e.g. 2024-01-15 14:30 CST)",
+      "both": "Both"
+    },
+    "saved": "Timezone settings saved"
+  },
+  "presence": {
+    "title": "Team Presence",
+    "online": "Online",
+    "away": "Away",
+    "offline": "Offline",
+    "members": "{{count}} members",
+    "widget": {
+      "title": "Team Presence",
+      "onlineCount": "{{count}} online",
+      "awayCount": "{{count}} away",
+      "offlineCount": "{{count}} offline"
+    }
+  },
+  "translation": {
+    "translate": "Translate",
+    "translating": "Translating...",
+    "stale": "Source text has changed",
+    "error": "Translation failed",
+    "retry": "Retry"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry"
+  }
+}

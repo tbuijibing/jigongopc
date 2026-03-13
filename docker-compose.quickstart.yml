@@ -1,0 +1,18 @@
+services:
+  Jigong:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${Jigong_PORT:-3100}:3100"
+    environment:
+      HOST: "0.0.0.0"
+      Jigong_HOME: "/Jigong"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      Jigong_DEPLOYMENT_MODE: "authenticated"
+      Jigong_DEPLOYMENT_EXPOSURE: "private"
+      Jigong_PUBLIC_URL: "${Jigong_PUBLIC_URL:-http://localhost:3100}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET must be set}"
+    volumes:
+      - "${Jigong_DATA_DIR:-./data/docker-Jigong}:/Jigong"
