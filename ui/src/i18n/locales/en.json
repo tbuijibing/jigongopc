@@ -670,5 +670,23 @@
       "retryAnthropicFailed": "Retried with ANTHROPIC_API_KEY unset in adapter config, but the environment test is still failing.",
       "unsetAnthropicFailed": "Failed to unset ANTHROPIC_API_KEY and retry."
     }
+  },
+  "time": {
+    "justNow": "just now",
+    "secondsAgo": "{{count}}s ago",
+    "secondsAgo_plural": "{{count}}s ago",
+    "minutesAgo": "{{count}}m ago",
+    "minutesAgo_plural": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "hoursAgo_plural": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "daysAgo_plural": "{{count}}d ago",
+    "weeksAgo": "{{count}}w ago",
+    "weeksAgo_plural": "{{count}}w ago",
+    "monthsAgo": "{{count}}mo ago",
+    "monthsAgo_plural": "{{count}}mo ago",
+    "dateFormat": "MMM d, yyyy",
+    "dateTimeFormat": "MMM d, yyyy h:mm a",
+    "shortDateFormat": "MMM d"
   }
 }

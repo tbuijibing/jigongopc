@@ -554,15 +554,51 @@ const COMMON_TIMEZONES = [
   "America/Chicago",
   "America/Denver",
   "America/Los_Angeles",
+  "America/Toronto",
+  "America/Vancouver",
+  "America/Mexico_City",
+  "America/Sao_Paulo",
+  "America/Buenos_Aires",
   "Europe/London",
   "Europe/Paris",
   "Europe/Berlin",
-  "Asia/Shanghai",
-  "Asia/Tokyo",
-  "Asia/Seoul",
+  "Europe/Madrid",
+  "Europe/Rome",
+  "Europe/Amsterdam",
+  "Europe/Stockholm",
+  "Europe/Copenhagen",
+  "Europe/Zurich",
+  "Europe/Istanbul",
+  "Europe/Moscow",
+  "Africa/Cairo",
+  "Africa/Johannesburg",
+  "Africa/Lagos",
+  "Asia/Dubai",
+  "Asia/Riyadh",
+  "Asia/Tehran",
+  "Asia/Karachi",
   "Asia/Kolkata",
+  "Asia/Dhaka",
+  "Asia/Bangkok",
+  "Asia/Singapore",
+  "Asia/Jakarta",
+  "Asia/Shanghai",
+  "Asia/Hong_Kong",
+  "Asia/Taipei",
+  "Asia/Seoul",
+  "Asia/Tokyo",
+  "Asia/Manila",
+  "Asia/Ho_Chi_Minh",
+  "Asia/Kuala_Lumpur",
+  "Australia/Perth",
+  "Australia/Darwin",
+  "Australia/Adelaide",
   "Australia/Sydney",
+  "Australia/Melbourne",
+  "Australia/Brisbane",
   "Pacific/Auckland",
+  "Pacific/Fiji",
+  "Pacific/Honolulu",
 ];
 
 function UserPreferencesSection({ companyId }: { companyId: string }) {
@@ -594,6 +630,25 @@ function UserPreferencesSection({ companyId }: { companyId: string }) {
         ...old,
         ...patch,
       }));
+      // Save timezone to localStorage for utility functions
+      if (patch.timezone) {
+        try {
+          localStorage.setItem("Jigong.timezone", patch.timezone);
+        } catch {
+          // localStorage unavailable
+        }
+      }
+      // Save locale to localStorage and update i18n
+      if (patch.locale) {
+        try {
+          localStorage.setItem("Jigong.locale", patch.locale);
+          import("@/i18n").then(({ i18n }) => {
+            i18n.changeLanguage(patch.locale);
+          });
+        } catch {
+          // localStorage unavailable
+        }
+      }
       return { previous };
     },
     onError: (_err, _patch, context) => {
@@ -613,6 +668,27 @@ function UserPreferencesSection({ companyId }: { companyId: string }) {
   if (!userId) return null;
 
   const prefs = prefsQuery.data;
+
+  // Sync loaded preferences to localStorage for utility functions
+  useEffect(() => {
+    if (prefs?.timezone) {
+      try {
+        localStorage.setItem("Jigong.timezone", prefs.timezone);
+      } catch {
+        // localStorage unavailable
+      }
+    }
+    if (prefs?.locale) {
+      try {
+        localStorage.setItem("Jigong.locale", prefs.locale);
+        import("@/i18n").then(({ i18n }) => {
+          i18n.changeLanguage(prefs.locale);
+        });
+      } catch {
+        // localStorage unavailable
+      }
+    }
+  }, [prefs?.timezone, prefs?.locale]);
 
   return (
     <div className="space-y-4">

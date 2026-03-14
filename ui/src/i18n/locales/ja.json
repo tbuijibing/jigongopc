@@ -689,5 +689,17 @@
       "retryAnthropicFailed": "アダプター設定で ANTHROPIC_API_KEY を解除して再試行しましたが、環境テストはまだ失敗しています。",
       "unsetAnthropicFailed": "ANTHROPIC_API_KEY の解除と再試行に失敗しました。"
     }
+  },
+  "time": {
+    "justNow": "たった今",
+    "secondsAgo": "{{count}}秒前",
+    "minutesAgo": "{{count}}分前",
+    "hoursAgo": "{{count}}時間前",
+    "daysAgo": "{{count}}日前",
+    "weeksAgo": "{{count}}週間前",
+    "monthsAgo": "{{count}}か月前",
+    "dateFormat": "yyyy年M月d日",
+    "dateTimeFormat": "yyyy年M月d日 HH:mm",
+    "shortDateFormat": "M月d日"
   }
 }

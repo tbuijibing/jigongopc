@@ -689,5 +689,17 @@
       "retryAnthropicFailed": "在适配器配置中取消设置 ANTHROPIC_API_KEY 后重试，但环境测试仍然失败。",
       "unsetAnthropicFailed": "取消设置 ANTHROPIC_API_KEY 并重试失败。"
     }
+  },
+  "time": {
+    "justNow": "刚刚",
+    "secondsAgo": "{{count}}秒前",
+    "minutesAgo": "{{count}}分钟前",
+    "hoursAgo": "{{count}}小时前",
+    "daysAgo": "{{count}}天前",
+    "weeksAgo": "{{count}}周前",
+    "monthsAgo": "{{count}}个月前",
+    "dateFormat": "yyyy年M月d日",
+    "dateTimeFormat": "yyyy年M月d日 HH:mm",
+    "shortDateFormat": "M月d日"
   }
 }
