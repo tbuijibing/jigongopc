@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "@/lib/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import type { Project } from "@Jigongai/shared";
 import { StatusBadge } from "./StatusBadge";
 import { cn, formatDate } from "../lib/utils";
@@ -77,6 +78,7 @@ function ProjectStatusPicker({ status, onChange }: { status: string; onChange: (
 }
 
 export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps) {
+  const { t } = useTranslation();
   const { selectedCompanyId } = useCompany();
   const queryClient = useQueryClient();
   const [goalOpen, setGoalOpen] = useState(false);
@@ -256,7 +258,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <PropertyRow label="Status">
+        <PropertyRow label={t("projects.properties.status")}>
           {onUpdate ? (
             <ProjectStatusPicker
               status={project.status}
@@ -267,16 +269,16 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
           )}
         </PropertyRow>
         {project.leadAgentId && (
-          <PropertyRow label="Lead">
+          <PropertyRow label={t("projects.properties.lead")}>
             <span className="text-sm font-mono">{project.leadAgentId.slice(0, 8)}</span>
           </PropertyRow>
         )}
         <div className="py-1.5">
           <div className="flex items-start justify-between gap-2">
-            <span className="text-xs text-muted-foreground">Goals</span>
+            <span className="text-xs text-muted-foreground">{t("projects.properties.goals")}</span>
             <div className="flex flex-col items-end gap-1.5">
               {linkedGoals.length === 0 ? (
-                <span className="text-sm text-muted-foreground">None</span>
+                <span className="text-sm text-muted-foreground">{t("goals.properties.none")}</span>
               ) : (
                 <div className="flex flex-wrap justify-end gap-1.5 max-w-[220px]">
                   {linkedGoals.map((goal) => (
@@ -311,13 +313,13 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                       disabled={availableGoals.length === 0}
                     >
                       <Plus className="h-3 w-3 mr-1" />
-                      Goal
+                      {t("projects.properties.goals")}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-56 p-1" align="end">
                     {availableGoals.length === 0 ? (
                       <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                        All goals linked.
+                        {t("projects.properties.allGoalsLinked")}
                       </div>
                     ) : (
                       availableGoals.map((goal) => (
@@ -337,7 +339,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
           </div>
         </div>
         {project.targetDate && (
-          <PropertyRow label="Target Date">
+          <PropertyRow label={t("projects.properties.targetDate")}>
             <span className="text-sm">{formatDate(project.targetDate)}</span>
           </PropertyRow>
         )}
@@ -348,7 +350,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
       <div className="space-y-1">
         <div className="py-1.5 space-y-2">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span>Workspaces</span>
+            <span>{t("projects.properties.workspaces")}</span>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
@@ -366,7 +368,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
           </div>
           {workspaces.length === 0 ? (
             <p className="rounded-md border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
-              No workspace configured.
+              {t("projects.properties.noWorkspace")}
             </p>
           ) : (
             <div className="space-y-1">
@@ -421,7 +423,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                 setWorkspaceError(null);
               }}
             >
-              Add workspace local folder
+              {t("projects.properties.addWorkspaceLocal")}
             </Button>
             <Button
               variant="outline"
@@ -432,7 +434,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                 setWorkspaceError(null);
               }}
             >
-              Add workspace repo
+              {t("projects.properties.addWorkspaceRepo")}
             </Button>
           </div>
           {workspaceMode === "local" && (
@@ -454,7 +456,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                   disabled={!workspaceCwd.trim() || createWorkspace.isPending}
                   onClick={submitLocalWorkspace}
                 >
-                  Save
+                  {t("common.save")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -466,7 +468,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                     setWorkspaceError(null);
                   }}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </div>
             </div>
@@ -487,7 +489,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                   disabled={!workspaceRepoUrl.trim() || createWorkspace.isPending}
                   onClick={submitRepoWorkspace}
                 >
-                  Save
+                  {t("common.save")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -499,7 +501,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
                     setWorkspaceError(null);
                   }}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </div>
             </div>
@@ -520,10 +522,10 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
 
         <Separator />
 
-        <PropertyRow label="Created">
+        <PropertyRow label={t("projects.properties.created")}>
           <span className="text-sm">{formatDate(project.createdAt)}</span>
         </PropertyRow>
-        <PropertyRow label="Updated">
+        <PropertyRow label={t("projects.properties.updated")}>
           <span className="text-sm">{formatDate(project.updatedAt)}</span>
         </PropertyRow>
       </div>

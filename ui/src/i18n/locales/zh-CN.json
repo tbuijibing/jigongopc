@@ -130,6 +130,45 @@
       "effortHigh": "高",
       "effortMinimal": "最小",
       "effortMax": "最大"
+    },
+    "properties": {
+      "title": "属性",
+      "status": "状态",
+      "priority": "优先级",
+      "type": "类型",
+      "labels": "标签",
+      "assignee": "负责人",
+      "project": "项目",
+      "parent": "父级",
+      "depth": "深度",
+      "started": "开始时间",
+      "completed": "完成时间",
+      "created": "创建时间",
+      "updated": "更新时间",
+      "creator": "创建者",
+      "unknown": "未知",
+      "noLabels": "无标签",
+      "unassigned": "未分配",
+      "noProject": "无项目",
+      "searchLabels": "搜索标签...",
+      "searchAssignees": "搜索负责人...",
+      "searchProjects": "搜索项目...",
+      "createLabel": "创建标签",
+      "creating": "创建中...",
+      "newLabel": "新标签",
+      "noAssignee": "无负责人",
+      "assignToMe": "分配给我",
+      "assignToRequester": "分配给请求者"
+    },
+    "executionChain": {
+      "title": "执行链",
+      "noAssignee": "未选择负责人",
+      "loading": "加载执行链...",
+      "capabilities": "能力",
+      "tools": "工具",
+      "domains": "领域",
+      "technologies": "技术栈",
+      "flowDescription": "任务将由以下代理层级执行"
     }
   },
   "agents": {
@@ -166,6 +205,17 @@
       "descOpenClawGateway": "通过网关协议调用 OpenClaw",
       "askCeoIssueTitle": "创建新代理",
       "askCeoIssueDescription": "（在此输入您想要的代理类型）"
+    },
+    "properties": {
+      "status": "状态",
+      "role": "角色",
+      "title": "职位",
+      "adapter": "适配器",
+      "session": "会话",
+      "lastError": "最后错误",
+      "lastHeartbeat": "最后心跳",
+      "reportsTo": "汇报给",
+      "created": "创建时间"
     }
   },
   "approvals": {
@@ -366,6 +416,15 @@
         "agent": "代理",
         "task": "任务"
       }
+    },
+    "properties": {
+      "status": "状态",
+      "level": "级别",
+      "owner": "负责人",
+      "parentGoal": "父目标",
+      "created": "创建时间",
+      "updated": "更新时间",
+      "none": "无"
     }
   },
   "projects": {
@@ -406,6 +465,21 @@
         "completed": "已完成",
         "cancelled": "已取消"
       }
+    },
+    "properties": {
+      "status": "状态",
+      "lead": "负责人",
+      "goals": "目标",
+      "targetDate": "目标日期",
+      "workspaces": "工作区",
+      "created": "创建时间",
+      "updated": "更新时间",
+      "noWorkspace": "未配置工作区。",
+      "addWorkspaceLocal": "添加本地工作区文件夹",
+      "addWorkspaceRepo": "添加工作区仓库",
+      "save": "保存",
+      "cancel": "取消",
+      "allGoalsLinked": "所有目标已关联。"
     }
   },
   "auth": {
@@ -429,6 +503,7 @@
     "alreadyHaveAccount": "已有账户？",
     "createOne": "创建一个",
     "authFailed": "认证失败",
+    "signOut": "退出登录",
     "boardClaim": {
       "invalidUrl": "无效的管理面板认领链接。",
       "loadingChallenge": "加载认领挑战中...",
@@ -701,5 +776,42 @@
     "dateFormat": "yyyy年M月d日",
     "dateTimeFormat": "yyyy年M月d日 HH:mm",
     "shortDateFormat": "M月d日"
+  },
+  "profile": {
+    "title": "个人中心",
+    "information": "个人信息",
+    "preferences": "偏好设置",
+    "name": "姓名",
+    "namePlaceholder": "输入您的姓名",
+    "email": "邮箱",
+    "timezone": "时区",
+    "timezoneHint": "选择您所在的时区以正确显示时间",
+    "language": "语言",
+    "languageHint": "选择界面显示语言",
+    "dateFormat": "日期格式",
+    "dateFormatHint": "选择日期显示方式",
+    "dateFormats": {
+      "relative": "相对时间（例如：2小时前）",
+      "absolute": "绝对时间（例如：2026-03-09 14:30）",
+      "both": "同时显示"
+    },
+    "save": "保存更改",
+    "saving": "保存中...",
+    "saved": "已保存",
+    "failedSave": "保存失败",
+    "notFound": "未找到用户信息",
+    "changePassword": "修改密码",
+    "currentPassword": "当前密码",
+    "currentPasswordPlaceholder": "输入当前密码",
+    "newPassword": "新密码",
+    "newPasswordPlaceholder": "输入新密码（至少8位）",
+    "confirmPassword": "确认新密码",
+    "confirmPasswordPlaceholder": "再次输入新密码",
+    "passwordMismatch": "两次输入的密码不一致",
+    "passwordTooShort": "密码长度至少为8位",
+    "passwordUpdated": "密码已更新",
+    "passwordFailed": "密码更新失败",
+    "updatePassword": "更新密码",
+    "updatingPassword": "更新中..."
   }
 }

@@ -14,3 +14,4 @@ export { dashboardApi } from "./dashboard";
 export { heartbeatsApi } from "./heartbeats";
 export { sidebarBadgesApi } from "./sidebarBadges";
 export { membersApi } from "./members";
+export { usersApi } from "./users";

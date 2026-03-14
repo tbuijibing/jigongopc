@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "@/lib/router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { agentsApi, type OrgNode } from "../api/agents";
 import { useCompany } from "../context/CompanyContext";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { queryKeys } from "../lib/queryKeys";
-import { agentUrl } from "../lib/utils";
+import { agentUrl, cn } from "../lib/utils";
 import { EmptyState } from "../components/EmptyState";
 import { PageSkeleton } from "../components/PageSkeleton";
 import { AgentIcon } from "../components/AgentIconPicker";
@@ -188,6 +188,22 @@ export function OrgChart() {
   const [zoom, setZoom] = useState(1);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+
+  // Drag and drop state for org chart
+  const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const updateReportingMutation = useMutation({
+    mutationFn: ({ agentId, reportsTo }: { agentId: string; reportsTo: string | null }) =>
+      agentsApi.update(agentId, { reportsTo: reportsTo ?? undefined }, selectedCompanyId ?? undefined),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.org(selectedCompanyId!) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.agents.list(selectedCompanyId!) });
+      setDraggingNodeId(null);
+      setDropTargetId(null);
+    },
+  });
 
   // Center the chart on first load
   const hasInitialized = useRef(false);
@@ -380,7 +396,48 @@ export function OrgChart() {
             <div
               key={node.id}
               data-org-card
-              className="absolute bg-card border border-border rounded-lg shadow-sm hover:shadow-md hover:border-foreground/20 transition-[box-shadow,border-color] duration-150 cursor-pointer select-none"
+              data-org-card-id={node.id}
+              draggable
+              onDragStart={(e) => {
+                e.stopPropagation();
+                setDraggingNodeId(node.id);
+                e.dataTransfer.effectAllowed = "move";
+                // Set drag image
+                const rect = (e.target as HTMLElement).getBoundingClientRect();
+                e.dataTransfer.setDragImage(e.target as HTMLElement, e.clientX - rect.left, e.clientY - rect.top);
+              }}
+              onDragEnd={(e) => {
+                e.stopPropagation();
+                if (dropTargetId && dropTargetId !== node.id) {
+                  updateReportingMutation.mutate({ agentId: node.id, reportsTo: dropTargetId });
+                }
+                setDraggingNodeId(null);
+                setDropTargetId(null);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (draggingNodeId && draggingNodeId !== node.id) {
+                  setDropTargetId(node.id);
+                  e.dataTransfer.dropEffect = "move";
+                }
+              }}
+              onDragLeave={(e) => {
+                e.stopPropagation();
+                if (dropTargetId === node.id) {
+                  setDropTargetId(null);
+                }
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className={cn(
+                "absolute bg-card border rounded-lg shadow-sm transition-all duration-150 cursor-move select-none",
+                draggingNodeId === node.id && "opacity-50",
+                dropTargetId === node.id && "ring-2 ring-primary border-primary",
+                "hover:shadow-md hover:border-foreground/20"
+              )}
               style={{
                 left: node.x,
                 top: node.y,

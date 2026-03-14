@@ -14,3 +14,4 @@ export { llmRoutes } from "./llms.js";
 export { accessRoutes } from "./access.js";
 export { humanAgentControlRoutes } from "./human-agent-controls.js";
 export { agentSelfRoutes } from "./agent-self.js";
+export { userRoutes } from "./users.js";

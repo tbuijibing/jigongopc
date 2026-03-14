@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type UIEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Moon, Sun } from "lucide-react";
+import { BookOpen, Moon, Sun, User } from "lucide-react";
 import { Outlet, useLocation, useNavigate, useParams } from "@/lib/router";
 import { CompanyRail } from "./CompanyRail";
 import { Sidebar } from "./Sidebar";
@@ -25,8 +25,53 @@ import { healthApi } from "../api/health";
 import { queryKeys } from "../lib/queryKeys";
 import { cn } from "../lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { authApi } from "../api/auth";
+
+function UserMenu() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { data: session } = useQuery({
+    queryKey: queryKeys.auth.session,
+    queryFn: () => authApi.getSession(),
+  });
+
+  const user = session?.user;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className="text-muted-foreground shrink-0"
+          aria-label={t("profile.title")}
+          title={t("profile.title")}
+        >
+          <User className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" side="top" className="w-48">
+        <DropdownMenuItem onClick={() => navigate("/profile")}>
+          {t("profile.title")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => authApi.signOut()}>
+          {t("auth.signOut")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export function Layout() {
   const { sidebarOpen, setSidebarOpen, toggleSidebar, isMobile } = useSidebar();
@@ -236,6 +281,7 @@ export function Layout() {
               >
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
+              <UserMenu />
             </div>
           </div>
         </div>
@@ -272,6 +318,7 @@ export function Layout() {
               >
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
+              <UserMenu />
             </div>
           </div>
         </div>

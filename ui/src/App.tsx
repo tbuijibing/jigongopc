@@ -28,6 +28,7 @@ import { DesignGuide } from "./pages/DesignGuide";
 import { OrgChart } from "./pages/OrgChart";
 import { NewAgent } from "./pages/NewAgent";
 import { SkillStore } from "./pages/SkillStore";
+import { UserProfile } from "./pages/UserProfile";
 import { AuthPage } from "./pages/Auth";
 import { BoardClaimPage } from "./pages/BoardClaim";
 import { InviteLandingPage } from "./pages/InviteLanding";
@@ -135,6 +136,7 @@ function boardRoutes() {
       <Route path="inbox/new" element={<Inbox />} />
       <Route path="inbox/all" element={<Inbox />} />
       <Route path="skills" element={<SkillStore />} />
+      <Route path="profile" element={<UserProfile />} />
       <Route path="design-guide" element={<DesignGuide />} />
     </>
   );
@@ -230,6 +232,7 @@ export function App() {
           <Route path="agents/:agentId/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="agents/:agentId/runs/:runId" element={<UnprefixedBoardRedirect />} />
           <Route path="skills" element={<UnprefixedBoardRedirect />} />
+      <Route path="profile" element={<UnprefixedBoardRedirect />} />
           <Route path="projects" element={<UnprefixedBoardRedirect />} />
           <Route path="projects/:projectId" element={<UnprefixedBoardRedirect />} />
           <Route path="projects/:projectId/overview" element={<UnprefixedBoardRedirect />} />

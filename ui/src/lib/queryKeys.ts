@@ -69,6 +69,10 @@ export const queryKeys = {
   auth: {
     session: ["auth", "session"] as const,
   },
+  users: {
+    me: ["users", "me"] as const,
+    detail: (id: string) => ["users", id] as const,
+  },
   health: ["health"] as const,
   secrets: {
     list: (companyId: string) => ["secrets", companyId] as const,

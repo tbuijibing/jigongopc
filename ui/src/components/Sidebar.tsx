@@ -11,6 +11,7 @@ import {
   Settings,
   Globe,
   Sparkles,
+  User,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarSection } from "./SidebarSection";
@@ -109,6 +110,7 @@ export function Sidebar() {
           <SidebarNavItem to="/activity" label={t("nav.activity")} icon={History} />
           <SidebarNavItem to="/collaboration" label={t("nav.collaboration")} icon={Globe} />
           <SidebarNavItem to="/company/settings" label={t("nav.settings")} icon={Settings} />
+          <SidebarNavItem to="/profile" label={t("profile.title")} icon={User} />
         </SidebarSection>
       </nav>
     </aside>

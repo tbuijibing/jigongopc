@@ -111,6 +111,45 @@
       "effortHigh": "High",
       "effortMinimal": "Minimal",
       "effortMax": "Max"
+    },
+    "properties": {
+      "title": "Properties",
+      "status": "Status",
+      "priority": "Priority",
+      "type": "Type",
+      "labels": "Labels",
+      "assignee": "Assignee",
+      "project": "Project",
+      "parent": "Parent",
+      "depth": "Depth",
+      "started": "Started",
+      "completed": "Completed",
+      "created": "Created",
+      "updated": "Updated",
+      "creator": "Creator",
+      "unknown": "Unknown",
+      "noLabels": "No labels",
+      "unassigned": "Unassigned",
+      "noProject": "No project",
+      "searchLabels": "Search labels...",
+      "searchAssignees": "Search assignees...",
+      "searchProjects": "Search projects...",
+      "createLabel": "Create label",
+      "creating": "Creating...",
+      "newLabel": "New label",
+      "noAssignee": "No assignee",
+      "assignToMe": "Assign to me",
+      "assignToRequester": "Assign to requester"
+    },
+    "executionChain": {
+      "title": "Execution Chain",
+      "noAssignee": "No assignee selected",
+      "loading": "Loading execution chain...",
+      "capabilities": "Capabilities",
+      "tools": "Tools",
+      "domains": "Domains",
+      "technologies": "Technologies",
+      "flowDescription": "Task will be executed by this agent hierarchy"
     }
   },
   "agents": {
@@ -147,6 +186,17 @@
       "descOpenClawGateway": "Invoke OpenClaw via gateway protocol",
       "askCeoIssueTitle": "Create a new agent",
       "askCeoIssueDescription": "(type in what kind of agent you want here)"
+    },
+    "properties": {
+      "status": "Status",
+      "role": "Role",
+      "title": "Title",
+      "adapter": "Adapter",
+      "session": "Session",
+      "lastError": "Last error",
+      "lastHeartbeat": "Last Heartbeat",
+      "reportsTo": "Reports To",
+      "created": "Created"
     }
   },
   "approvals": {
@@ -347,6 +397,15 @@
         "agent": "Agent",
         "task": "Task"
       }
+    },
+    "properties": {
+      "status": "Status",
+      "level": "Level",
+      "owner": "Owner",
+      "parentGoal": "Parent Goal",
+      "created": "Created",
+      "updated": "Updated",
+      "none": "None"
     }
   },
   "projects": {
@@ -387,6 +446,19 @@
         "completed": "Completed",
         "cancelled": "Cancelled"
       }
+    },
+    "properties": {
+      "status": "Status",
+      "lead": "Lead",
+      "goals": "Goals",
+      "targetDate": "Target Date",
+      "workspaces": "Workspaces",
+      "created": "Created",
+      "updated": "Updated",
+      "noWorkspace": "No workspace configured.",
+      "addWorkspaceLocal": "Add workspace local folder",
+      "addWorkspaceRepo": "Add workspace repo",
+      "allGoalsLinked": "All goals linked."
     }
   },
   "auth": {
@@ -410,6 +482,7 @@
     "alreadyHaveAccount": "Already have an account?",
     "createOne": "Create one",
     "authFailed": "Authentication failed",
+    "signOut": "Sign Out",
     "boardClaim": {
       "invalidUrl": "Invalid board claim URL.",
       "loadingChallenge": "Loading claim challenge...",
@@ -688,5 +761,42 @@
     "dateFormat": "MMM d, yyyy",
     "dateTimeFormat": "MMM d, yyyy h:mm a",
     "shortDateFormat": "MMM d"
+  },
+  "profile": {
+    "title": "Profile",
+    "information": "Personal Information",
+    "preferences": "Preferences",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "email": "Email",
+    "timezone": "Timezone",
+    "timezoneHint": "Select your timezone for correct time display",
+    "language": "Language",
+    "languageHint": "Select your preferred display language",
+    "dateFormat": "Date Format",
+    "dateFormatHint": "Select how dates are displayed",
+    "dateFormats": {
+      "relative": "Relative (e.g. 2 hours ago)",
+      "absolute": "Absolute (e.g. 2026-03-09 14:30)",
+      "both": "Both"
+    },
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "failedSave": "Failed to save",
+    "notFound": "User not found",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "currentPasswordPlaceholder": "Enter current password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password (at least 8 characters)",
+    "confirmPassword": "Confirm New Password",
+    "confirmPasswordPlaceholder": "Re-enter new password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordUpdated": "Password updated",
+    "passwordFailed": "Failed to update password",
+    "updatePassword": "Update Password",
+    "updatingPassword": "Updating..."
   }
 }

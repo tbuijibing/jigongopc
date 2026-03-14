@@ -18,6 +18,7 @@ import { InlineEditor } from "../components/InlineEditor";
 import { CommentThread } from "../components/CommentThread";
 import { IssueProperties } from "../components/IssueProperties";
 import { LiveRunWidget } from "../components/LiveRunWidget";
+import { ExecutionChainPreview } from "../components/ExecutionChainPreview";
 import type { MentionOption } from "../components/MarkdownEditor";
 import { StatusIcon } from "../components/StatusIcon";
 import { PriorityIcon } from "../components/PriorityIcon";
@@ -493,7 +494,12 @@ export function IssueDetail() {
   useEffect(() => {
     if (issue) {
       openPanel(
-        <IssueProperties issue={issue} onUpdate={(data) => updateIssue.mutate(data)} />
+        <>
+          <IssueProperties issue={issue} onUpdate={(data) => updateIssue.mutate(data)} />
+          <div className="mt-6">
+            <ExecutionChainPreview assigneeId={issue.assigneeAgentId} />
+          </div>
+        </>
       );
     }
     return () => closePanel();
@@ -928,8 +934,9 @@ export function IssueDetail() {
             <SheetTitle className="text-sm">{t("issues.properties")}</SheetTitle>
           </SheetHeader>
           <ScrollArea className="flex-1 overflow-y-auto">
-            <div className="px-4 pb-4">
+            <div className="px-4 pb-4 space-y-6">
               <IssueProperties issue={issue} onUpdate={(data) => updateIssue.mutate(data)} inline />
+              <ExecutionChainPreview assigneeId={issue.assigneeAgentId} />
             </div>
           </ScrollArea>
         </SheetContent>

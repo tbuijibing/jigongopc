@@ -26,6 +26,7 @@ import { assetRoutes } from "./routes/assets.js";
 import { accessRoutes } from "./routes/access.js";
 import { humanAgentControlRoutes } from "./routes/human-agent-controls.js";
 import { agentSelfRoutes } from "./routes/agent-self.js";
+import { userRoutes } from "./routes/users.js";
 import type { BetterAuthSessionResult } from "./auth/better-auth.js";
 import { loadModules } from "./modules/loader.js";
 
@@ -117,6 +118,7 @@ export async function createApp(
   api.use(sidebarBadgeRoutes(db));
   api.use(humanAgentControlRoutes(db));
   api.use(agentSelfRoutes(db));
+  api.use("/users", userRoutes(db));
   api.use(
     accessRoutes(db, {
       deploymentMode: opts.deploymentMode,
