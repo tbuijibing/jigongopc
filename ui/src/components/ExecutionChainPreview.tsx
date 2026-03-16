@@ -81,7 +81,7 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
       <div className={cn("p-4 border border-border rounded-lg bg-muted/20", className)}>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Network className="h-4 w-4" />
-          <span className="text-sm">{t("executionChain.noAssignee")}</span>
+          <span className="text-sm">{t("issues.executionChain.noAssignee")}</span>
         </div>
       </div>
     );
@@ -92,7 +92,7 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
       <div className={cn("p-4 border border-border rounded-lg bg-muted/20", className)}>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Network className="h-4 w-4" />
-          <span className="text-sm">{t("executionChain.loading")}</span>
+          <span className="text-sm">{t("issues.executionChain.loading")}</span>
         </div>
       </div>
     );
@@ -106,7 +106,7 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
       <div className="px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Network className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">{t("executionChain.title")}</span>
+          <span className="text-sm font-medium">{t("issues.executionChain.title")}</span>
         </div>
       </div>
 
@@ -166,14 +166,14 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
         {capabilities && (
           <div className="pt-3 border-t border-border space-y-3">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              {t("executionChain.capabilities")}
+              {t("issues.executionChain.capabilities")}
             </div>
 
             {/* Tools */}
             {capabilities.tools.length > 0 && (
               <div className="space-y-1">
                 <div className="text-xs text-muted-foreground">
-                  {t("executionChain.tools")}
+                  {t("issues.executionChain.tools")}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {capabilities.tools.slice(0, 8).map((tool) => (
@@ -197,7 +197,7 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
             {capabilities.domains.length > 0 && (
               <div className="space-y-1">
                 <div className="text-xs text-muted-foreground">
-                  {t("executionChain.domains")}
+                  {t("issues.executionChain.domains")}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {capabilities.domains.slice(0, 5).map((domain) => (
@@ -221,7 +221,7 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
             {(capabilities.languages.length > 0 || capabilities.frameworks.length > 0) && (
               <div className="space-y-1">
                 <div className="text-xs text-muted-foreground">
-                  {t("executionChain.technologies")}
+                  {t("issues.executionChain.technologies")}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {[...capabilities.languages, ...capabilities.frameworks]
@@ -244,7 +244,7 @@ export function ExecutionChainPreview({ assigneeId, className }: ExecutionChainP
         <div className="pt-3 border-t border-border">
           <div className="flex items-start gap-2 text-xs text-muted-foreground">
             <ChevronRight className="h-3 w-3 mt-0.5 shrink-0" />
-            <span>{t("executionChain.flowDescription")}</span>
+            <span>{t("issues.executionChain.flowDescription")}</span>
           </div>
         </div>
       </div>

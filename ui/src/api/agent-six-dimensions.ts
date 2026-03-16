@@ -182,4 +182,155 @@ export const agentSixDimensionApi = {
     api.get<DiscoverResult[]>(
       `/companies/${companyId}/agents/discover?need=${encodeURIComponent(need)}`,
     ),
+
+  // Template Marketplace
+  listMarketplaceTemplates: (companyId: string, params?: {
+    category?: string;
+    freeOnly?: boolean;
+    sort?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.category) searchParams.set("category", params.category);
+    if (params?.freeOnly) searchParams.set("freeOnly", "true");
+    if (params?.sort) searchParams.set("sort", params.sort);
+    if (params?.page) searchParams.set("page", String(params.page));
+    if (params?.limit) searchParams.set("limit", String(params.limit));
+    return api.get<{ templates: CompanyTemplate[]; total: number }>(
+      `/companies/${companyId}/marketplace/templates?${searchParams.toString()}`
+    );
+  },
+
+  searchMarketplace: (companyId: string, query: string, params?: {
+    category?: string;
+    priceMin?: number;
+    priceMax?: number;
+    rating?: number;
+    sort?: string;
+  }) => {
+    const searchParams = new URLSearchParams({ q: query });
+    if (params?.category) searchParams.set("category", params.category);
+    if (params?.priceMin !== undefined) searchParams.set("priceMin", String(params.priceMin));
+    if (params?.priceMax !== undefined) searchParams.set("priceMax", String(params.priceMax));
+    if (params?.rating !== undefined) searchParams.set("rating", String(params.rating));
+    if (params?.sort) searchParams.set("sort", params.sort);
+    return api.get<{ templates: CompanyTemplate[]; total: number }>(
+      `/companies/${companyId}/marketplace/templates/search?${searchParams.toString()}`
+    );
+  },
+
+  getMarketplaceTemplate: (companyId: string, templateId: string, includeLineage?: boolean) => {
+    const params = includeLineage ? "?includeLineage=true" : "";
+    return api.get<CompanyTemplateDetail>(`/companies/${companyId}/marketplace/templates/${templateId}${params}`);
+  },
+
+  previewTemplate: (companyId: string, templateId: string) =>
+    api.get<{ manifest: object; customizationPreview: object }>(
+      `/companies/${companyId}/marketplace/templates/${templateId}/preview`
+    ),
+
+  purchaseTemplate: (companyId: string, templateId: string, data: { paymentMethod: string }) =>
+    api.post<{ success: boolean; transactionId: string; amountCents: number; status: string }>(
+      `/companies/${companyId}/marketplace/templates/${templateId}/purchase`,
+      data
+    ),
+
+  installTemplate: (companyId: string, templateId: string, data: { targetCompanyId: string; customize?: boolean }) =>
+    api.post<{ success: boolean; templateId: string; version: string; message?: string }>(
+      `/companies/${companyId}/marketplace/templates/${templateId}/install`,
+      data
+    ),
+
+  forkTemplate: (companyId: string, templateId: string, data: {
+    name?: string;
+    description?: string;
+    priceCents?: number;
+    isPublic?: boolean;
+  }) =>
+    api.post<CompanyTemplate>(
+      `/companies/${companyId}/marketplace/templates/${templateId}/fork`,
+      data
+    ),
+
+  listInstalledTemplates: (companyId: string) =>
+    api.get<{ templates: CompanyTemplate[] }>(`/companies/${companyId}/templates/installed`),
+
+  uninstallTemplate: (companyId: string, templateId: string, force?: boolean) =>
+    api.post<{ success: boolean }>(`/companies/${companyId}/templates/${templateId}/uninstall`, { force }),
+
+  upgradeTemplate: (companyId: string, templateId: string, targetVersion?: string) =>
+    api.post<{ success: boolean; version: string }>(
+      `/companies/${companyId}/templates/${templateId}/upgrade`,
+      { targetVersion }
+    ),
+
+  publishTemplate: (companyId: string, templateId: string, isPublic: boolean) =>
+    api.post<CompanyTemplate>(`/companies/${companyId}/templates/${templateId}/publish`, { isPublic }),
+
+  // Creator Revenue
+  getCreatorRevenue: (companyId: string) =>
+    api.get<CreatorRevenueSummary>(`/companies/${companyId}/creator/revenue`),
+
+  requestPayout: (companyId: string, data: { amountCents: number; method: string }) =>
+    api.post<{ success: boolean; payoutId: string }>(`/companies/${companyId}/creator/payout`, data),
 };
+
+// Template Marketplace Types
+export interface CompanyTemplate {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  version: string;
+  category?: string;
+  isPublic: boolean;
+  priceCents: number;
+  installCount: number;
+  rating?: number;
+  authorName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CompanyTemplateDetail extends CompanyTemplate {
+  content?: object;
+  lineage?: {
+    forkedFrom?: string;
+    forkedFromName?: string;
+    ancestorChain: Array<{
+      id: string;
+      name: string;
+      level: number;
+    }>;
+    forks: Array<{
+      id: string;
+      name: string;
+      companyName: string;
+    }>;
+  };
+  versions: Array<{
+    version: string;
+    changeLog?: string;
+    createdAt: string;
+  }>;
+}
+
+export interface CreatorRevenueSummary {
+  totalEarnedCents: number;
+  availableBalanceCents: number;
+  pendingBalanceCents: number;
+  totalWithdrawnCents: number;
+  tier: "bronze" | "silver" | "gold" | "platinum" | "diamond";
+  tierProgress: {
+    current: number;
+    next: number;
+    percentage: number;
+  };
+  templates: Array<{
+    templateId: string;
+    name: string;
+    totalRevenueCents: number;
+    installCount: number;
+  }>;
+}

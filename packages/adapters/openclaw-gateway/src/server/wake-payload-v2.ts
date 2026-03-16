@@ -11,6 +11,14 @@ export interface StructuredWakePayload {
   skills: {
     indexUrl: string;
     required: string[];
+    agentSkills?: {
+      name: string;
+      slug: string;
+      content: string;
+      category: string;
+      version: string;
+      source?: string;
+    }[];
   };
   run: {
     runId: string;
@@ -48,6 +56,15 @@ export function buildWakePayloadV2(params: {
   approvalId?: string | null;
   approvalStatus?: string | null;
   linkedIssueIds?: string[];
+  // Optional agent skills to include in payload
+  agentSkills?: {
+    name: string;
+    slug: string;
+    content: string;
+    category: string;
+    version: string;
+    source?: string;
+  }[];
 }): { payload: StructuredWakePayload; message: string } {
   const baseUrl = params.JigongApiUrl;
 
@@ -65,6 +82,7 @@ export function buildWakePayloadV2(params: {
   const skills: StructuredWakePayload["skills"] = {
     indexUrl: `${baseUrl}/api/skills/index`,
     required: ["Jigong"],
+    agentSkills: params.agentSkills,
   };
 
   const run: StructuredWakePayload["run"] = {

@@ -38,5 +38,47 @@ export { skillRegistry } from "./skill_registry.js";
 export { agentSkills } from "./agent_skills.js";
 export { agentMemories } from "./agent_memories.js";
 export { issueDependencies } from "./issue_dependencies.js";
+export { skillSources } from "./skill_sources.js";
 export { issueWatchers } from "./issue_watchers.js";
 export { humanAgentControls } from "./human_agent_controls.js";
+
+// Company Operating Template System
+export {
+  companyTemplates,
+  templateSubscriptions,
+  templateMarketplace,
+} from "./company_templates.js";
+export {
+  templateWorkflows,
+  templateRoles,
+  projectTemplateAssignments,
+} from "./template_workflows.js";
+export {
+  templateWorkflowNodes,
+  templateWorkflowEdges,
+  templateSnapshots,
+} from "./company_templates_index.js";
+export {
+  transactions,
+  transactionRoleAssignments,
+} from "./transactions.js";
+export {
+  transactionDeliverables,
+  deliverableDependencies,
+} from "./transaction_deliverables.js";
+export {
+  accountabilityTrails,
+  transactionTimelines,
+} from "./accountability_trails.js";
+export {
+  templateLineages,
+} from "./template_lineages.js";
+export {
+  creatorRevenueAccounts,
+  revenueRecords,
+  creatorRevenueDistributions,
+  creatorPayoutRequests,
+  creatorTierHistory,
+  revenueSettlementCycles,
+  templateRevenueStats,
+} from "./creator_incentive.js";

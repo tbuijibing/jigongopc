@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { eq } from "drizzle-orm";
 import type { Db } from "@jigongai/db";
-import { authUsers } from "@jigongai/db/schema/auth";
+import { authUsers } from "@jigongai/db";
 
 export function userRoutes(db: Db) {
   const router = Router();

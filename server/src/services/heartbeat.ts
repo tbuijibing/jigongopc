@@ -24,6 +24,7 @@ import { parseObject, asBoolean, asNumber, appendWithCap, MAX_EXCERPT_BYTES } fr
 import { secretService } from "./secrets.js";
 import { resolveDefaultAgentWorkspaceDir } from "../home-paths.js";
 import { promptAssemblyService } from "./prompt-assembly.js";
+import { agentSkillService } from "./agent-skills.js";
 
 const MAX_LIVE_LOG_CHUNK_BYTES = 8 * 1024;
 const HEARTBEAT_MAX_CONCURRENT_RUNS_DEFAULT = 1;
@@ -1294,6 +1295,37 @@ export function heartbeatService(db: Db) {
         );
       }
       // --- End Prompt Assembly ---
+
+      // --- Agent Skills: Load skills and add to context for OpenClaw sync ---
+      try {
+        const agentSkillsResult = await agentSkillService(db).getAgentSkills(
+          agent.companyId,
+          agent.id,
+        );
+        if (agentSkillsResult.source === "agent_skills" && agentSkillsResult.skills.length > 0) {
+          // Transform skills to the format expected by OpenClaw wake payload
+          const agentSkillsForContext = agentSkillsResult.skills.map((skill) => ({
+            name: skill.skillName,
+            slug: skill.skillSlug,
+            content: skill.skillContent ?? "",
+            category: skill.skillCategory ?? "custom",
+            version: skill.skillVersion ?? "1.0.0",
+            source: "agent_skills",
+          }));
+          context.agentSkills = agentSkillsForContext;
+          logger.debug(
+            { companyId: agent.companyId, agentId: agent.id, skillCount: agentSkillsForContext.length },
+            "Loaded agent skills for OpenClaw sync",
+          );
+        }
+      } catch (skillsErr) {
+        logger.warn(
+          { companyId: agent.companyId, agentId: agent.id, runId: run.id, err: skillsErr },
+          "Failed to load agent skills, continuing without skills sync",
+        );
+      }
+      // --- End Agent Skills ---
+
       const adapterResult = await adapter.execute({
         runId: run.id,
         agent,

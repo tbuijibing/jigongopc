@@ -10,7 +10,9 @@
     "search": "搜索...",
     "noResults": "未找到结果",
     "clearAll": "清除全部",
-    "confirm": "确认"
+    "confirm": "确认",
+    "none": "无",
+    "me": "我"
   },
   "nav": {
     "dashboard": "仪表盘",
@@ -158,7 +160,8 @@
       "newLabel": "新标签",
       "noAssignee": "无负责人",
       "assignToMe": "分配给我",
-      "assignToRequester": "分配给请求者"
+      "assignToRequester": "分配给请求者",
+      "deleteLabel": "删除 {{name}}"
     },
     "executionChain": {
       "title": "执行链",
@@ -215,7 +218,16 @@
       "lastError": "最后错误",
       "lastHeartbeat": "最后心跳",
       "reportsTo": "汇报给",
-      "created": "创建时间"
+      "created": "创建时间",
+      "adapterTypes": {
+        "claude_local": "Claude (本地)",
+        "codex_local": "Codex (本地)",
+        "opencode_local": "OpenCode (本地)",
+        "openclaw_gateway": "OpenClaw 网关",
+        "cursor": "Cursor (本地)",
+        "process": "进程",
+        "http": "HTTP"
+      }
     }
   },
   "approvals": {
@@ -479,7 +491,12 @@
       "addWorkspaceRepo": "添加工作区仓库",
       "save": "保存",
       "cancel": "取消",
-      "allGoalsLinked": "所有目标已关联。"
+      "allGoalsLinked": "所有目标已关联。",
+      "localPathError": "本地文件夹必须是完整的绝对路径。",
+      "repoUrlError": "仓库工作区必须使用有效的 GitHub 仓库 URL。",
+      "failedSaveWorkspace": "保存工作区失败。",
+      "failedDeleteWorkspace": "删除工作区失败。",
+      "failedUpdateWorkspace": "更新工作区失败。"
     }
   },
   "auth": {
@@ -813,5 +830,86 @@
     "passwordFailed": "密码更新失败",
     "updatePassword": "更新密码",
     "updatingPassword": "更新中..."
+  },
+  "templateStore": {
+    "title": "模板商店",
+    "description": "发现并安装模板来增强您的代理工作流",
+    "searchPlaceholder": "按名称、描述或作者搜索模板...",
+    "categories": "分类",
+    "allTemplates": "所有模板",
+    "hotTemplates": "热门模板",
+    "featuredPremium": "精选高级",
+    "latestReleases": "最新发布",
+    "filters": "筛选",
+    "price": "价格",
+    "rating": "评分",
+    "allPrices": "全部",
+    "free": "免费",
+    "paid": "付费",
+    "allRatings": "所有评分",
+    "sortBy": "排序",
+    "mostPopular": "最受欢迎",
+    "newest": "最新",
+    "highestRated": "评分最高",
+    "priceLowToHigh": "价格：从低到高",
+    "priceHighToLow": "价格：从高到低",
+    "clearFilters": "清除筛选",
+    "creatorCenter": "创作者中心",
+    "install": "安装",
+    "purchase": "购买",
+    "installing": "安装中...",
+    "purchasing": "购买中...",
+    "fork": "分叉",
+    "forking": "分叉中...",
+    "popular": "热门",
+    "new": "新发布",
+    "templatesCount": "{{count}} 个模板"
+  },
+  "templateDetail": {
+    "title": "模板详情",
+    "description": "查看模板信息并安装",
+    "backToStore": "返回商店",
+    "overview": "概述",
+    "features": "功能",
+    "lineage": "系谱",
+    "reviews": "评价",
+    "aboutTemplate": "关于此模板",
+    "templateInfo": "模板信息",
+    "versionHistory": "版本历史",
+    "relatedTemplates": "相关模板",
+    "installTemplate": "安装模板",
+    "purchaseTemplate": "购买模板",
+    "confirmInstallation": "确认安装",
+    "cancel": "取消",
+    "oneTimePurchase": "一次性购买",
+    "paymentMethod": "支付方式",
+    "accountBalance": "账户余额",
+    "creditCard": "信用卡（Stripe）",
+    "alipay": "支付宝",
+    "wechatPay": "微信支付",
+    "verified": "已验证",
+    "securePayment": "安全支付",
+    "instantDelivery": "即时交付",
+    "free": "免费",
+    "writeReview": "写评价",
+    "submitReview": "提交评价",
+    "ratingSummary": "评分摘要",
+    "helpful": "有用",
+    "report": "举报",
+    "ancestors": "祖先",
+    "forks": "分叉",
+    "forkedFrom": "分叉自",
+    "noAncestors": "无祖先 - 这是原创模板",
+    "noLineage": "此模板没有系谱信息",
+    "installs": "安装量",
+    "updated": "更新于",
+    "author": "作者",
+    "category": "分类",
+    "version": "版本",
+    "slug": "标识",
+    "created": "创建于",
+    "preview": "预览",
+    "public": "公开",
+    "private": "私有"
   }
 }

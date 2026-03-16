@@ -538,6 +538,9 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
   let message: string;
   let payloadV2: Record<string, unknown> | null = null;
 
+  // Extract agent skills from context (passed by heartbeat service)
+  const agentSkills = Array.isArray(ctx.context.agentSkills) ? ctx.context.agentSkills : [];
+
   if (wakeVersion === "2") {
     const v2Result = buildWakePayloadV2({
       runId: ctx.runId,
@@ -552,6 +555,7 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
       approvalId: wakePayload.approvalId,
       approvalStatus: wakePayload.approvalStatus,
       linkedIssueIds: wakePayload.issueIds,
+      agentSkills: agentSkills.length > 0 ? agentSkills : undefined,
     });
     const templateMessage = nonEmpty(payloadTemplate.message) ?? nonEmpty(payloadTemplate.text);
     message = templateMessage ? appendWakeText(templateMessage, v2Result.message) : v2Result.message;

@@ -15,6 +15,8 @@ import { registerAgentCommands } from "./commands/client/agent.js";
 import { registerApprovalCommands } from "./commands/client/approval.js";
 import { registerActivityCommands } from "./commands/client/activity.js";
 import { registerDashboardCommands } from "./commands/client/dashboard.js";
+import { registerTemplateCommands as registerClientTemplateCommands } from "./commands/client/template.js";
+import { registerTemplateCommands } from "./commands/template.js";
 import { applyDataDirOverride, type DataDirOptionLike } from "./config/data-dir.js";
 
 const program = new Command();
@@ -132,6 +134,8 @@ registerAgentCommands(program);
 registerApprovalCommands(program);
 registerActivityCommands(program);
 registerDashboardCommands(program);
+registerClientTemplateCommands(program);
+registerTemplateCommands(program);
 
 const auth = program.command("auth").description("Authentication and bootstrap utilities");
 

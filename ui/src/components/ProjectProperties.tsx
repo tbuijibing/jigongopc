@@ -42,8 +42,17 @@ function PropertyRow({ label, children }: { label: string; children: React.React
 }
 
 function ProjectStatusPicker({ status, onChange }: { status: string; onChange: (status: string) => void }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const colorClass = statusBadge[status] ?? statusBadgeDefault;
+
+  const PROJECT_STATUSES = [
+    { value: "backlog", label: t("projects.newDialog.status.backlog") },
+    { value: "planned", label: t("projects.newDialog.status.planned") },
+    { value: "in_progress", label: t("projects.newDialog.status.in_progress") },
+    { value: "completed", label: t("projects.newDialog.status.completed") },
+    { value: "cancelled", label: t("projects.newDialog.status.cancelled") },
+  ];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -54,7 +63,7 @@ function ProjectStatusPicker({ status, onChange }: { status: string; onChange: (
             colorClass,
           )}
         >
-          {status.replace("_", " ")}
+          {PROJECT_STATUSES.find((s) => s.value === status)?.label ?? status.replace("_", " ")}
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-40 p-1" align="start">
@@ -196,7 +205,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
   const submitLocalWorkspace = () => {
     const cwd = workspaceCwd.trim();
     if (!isAbsolutePath(cwd)) {
-      setWorkspaceError("Local folder must be a full absolute path.");
+      setWorkspaceError(t("projects.properties.localPathError"));
       return;
     }
     setWorkspaceError(null);
@@ -209,7 +218,7 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
   const submitRepoWorkspace = () => {
     const repoUrl = workspaceRepoUrl.trim();
     if (!isGitHubRepoUrl(repoUrl)) {
-      setWorkspaceError("Repo workspace must use a valid GitHub repo URL.");
+      setWorkspaceError(t("projects.properties.repoUrlError"));
       return;
     }
     setWorkspaceError(null);
@@ -510,13 +519,13 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
             <p className="text-xs text-destructive">{workspaceError}</p>
           )}
           {createWorkspace.isError && (
-            <p className="text-xs text-destructive">Failed to save workspace.</p>
+            <p className="text-xs text-destructive">{t("projects.properties.failedSaveWorkspace")}</p>
           )}
           {removeWorkspace.isError && (
-            <p className="text-xs text-destructive">Failed to delete workspace.</p>
+            <p className="text-xs text-destructive">{t("projects.properties.failedDeleteWorkspace")}</p>
           )}
           {updateWorkspace.isError && (
-            <p className="text-xs text-destructive">Failed to update workspace.</p>
+            <p className="text-xs text-destructive">{t("projects.properties.failedUpdateWorkspace")}</p>
           )}
         </div>
 

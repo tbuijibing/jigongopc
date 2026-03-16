@@ -27,6 +27,8 @@ import { accessRoutes } from "./routes/access.js";
 import { humanAgentControlRoutes } from "./routes/human-agent-controls.js";
 import { agentSelfRoutes } from "./routes/agent-self.js";
 import { userRoutes } from "./routes/users.js";
+import { marketplaceRoutes } from "./routes/marketplace.js";
+import { graphqlRoutes } from "./routes/graphql.js";
 import type { BetterAuthSessionResult } from "./auth/better-auth.js";
 import { loadModules } from "./modules/loader.js";
 
@@ -107,6 +109,7 @@ export async function createApp(
   api.use("/companies", companyRoutes(db));
   api.use(agentRoutes(db));
   api.use(assetRoutes(db, opts.storageService));
+  api.use(marketplaceRoutes(db));
   api.use(projectRoutes(db));
   api.use(issueRoutes(db, opts.storageService));
   api.use(goalRoutes(db));
@@ -119,6 +122,7 @@ export async function createApp(
   api.use(humanAgentControlRoutes(db));
   api.use(agentSelfRoutes(db));
   api.use("/users", userRoutes(db));
+  api.use(graphqlRoutes(db));
   api.use(
     accessRoutes(db, {
       deploymentMode: opts.deploymentMode,

@@ -15,16 +15,6 @@ interface AgentPropertiesProps {
   runtimeState?: AgentRuntimeState;
 }
 
-const adapterLabels: Record<string, string> = {
-  claude_local: "Claude (local)",
-  codex_local: "Codex (local)",
-  opencode_local: "OpenCode (local)",
-  openclaw_gateway: "OpenClaw Gateway",
-  cursor: "Cursor (local)",
-  process: "Process",
-  http: "HTTP",
-};
-
 const roleLabels = AGENT_ROLE_LABELS as Record<string, string>;
 
 function PropertyRow({ label, children }: { label: string; children: React.ReactNode }) {
@@ -48,6 +38,10 @@ export function AgentProperties({ agent, runtimeState }: AgentPropertiesProps) {
 
   const reportsToAgent = agent.reportsTo ? agents?.find((a) => a.id === agent.reportsTo) : null;
 
+  // Get adapter type translation, fallback to raw value if not found
+  const adapterTypeKey = `agents.properties.adapterTypes.${agent.adapterType}`;
+  const adapterTypeLabel = t(adapterTypeKey, { defaultValue: agent.adapterType });
+
   return (
     <div className="space-y-4">
       <div className="space-y-1">
@@ -63,7 +57,7 @@ export function AgentProperties({ agent, runtimeState }: AgentPropertiesProps) {
           </PropertyRow>
         )}
         <PropertyRow label={t("agents.properties.adapter")}>
-          <span className="text-sm font-mono">{adapterLabels[agent.adapterType] ?? agent.adapterType}</span>
+          <span className="text-sm font-mono">{adapterTypeLabel}</span>
         </PropertyRow>
       </div>
 

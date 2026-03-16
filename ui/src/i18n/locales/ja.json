@@ -10,7 +10,9 @@
     "search": "検索...",
     "noResults": "結果が見つかりません",
     "clearAll": "すべてクリア",
-    "confirm": "確認"
+    "confirm": "確認",
+    "none": "なし",
+    "me": "自分"
   },
   "nav": {
     "dashboard": "ダッシュボード",
@@ -158,7 +160,8 @@
       "newLabel": "新しいラベル",
       "noAssignee": "担当者なし",
       "assignToMe": "自分に割り当て",
-      "assignToRequester": "依頼者に割り当て"
+      "assignToRequester": "依頼者に割り当て",
+      "deleteLabel": "{{name}} を削除"
     },
     "executionChain": {
       "title": "実行チェーン",
@@ -215,7 +218,16 @@
       "lastError": "最後のエラー",
       "lastHeartbeat": "最終ハートビート",
       "reportsTo": "報告先",
-      "created": "作成日"
+      "created": "作成日",
+      "adapterTypes": {
+        "claude_local": "Claude (ローカル)",
+        "codex_local": "Codex (ローカル)",
+        "opencode_local": "OpenCode (ローカル)",
+        "openclaw_gateway": "OpenClaw ゲートウェイ",
+        "cursor": "Cursor (ローカル)",
+        "process": "プロセス",
+        "http": "HTTP"
+      }
     }
   },
   "approvals": {
@@ -479,7 +491,12 @@
       "addWorkspaceRepo": "ワークスペースリポジトリを追加",
       "save": "保存",
       "cancel": "キャンセル",
-      "allGoalsLinked": "すべての目標がリンクされています。"
+      "allGoalsLinked": "すべての目標がリンクされています。",
+      "localPathError": "ローカルフォルダーは完全な絶対パスである必要があります。",
+      "repoUrlError": "リポジトリワークスペースには有効な GitHub リポジトリ URL を使用してください。",
+      "failedSaveWorkspace": "ワークスペースの保存に失敗しました。",
+      "failedDeleteWorkspace": "ワークスペースの削除に失敗しました。",
+      "failedUpdateWorkspace": "ワークスペースの更新に失敗しました。"
     }
   },
   "auth": {
@@ -813,5 +830,86 @@
     "passwordFailed": "パスワードの更新に失敗しました",
     "updatePassword": "パスワードを更新",
     "updatingPassword": "更新中..."
+  },
+  "templateStore": {
+    "title": "テンプレートストア",
+    "description": "エージェントワークフローを加速するテンプレートを発見・インストール",
+    "searchPlaceholder": "テンプレート名、説明、または作者で検索...",
+    "categories": "カテゴリ",
+    "allTemplates": "すべてのテンプレート",
+    "hotTemplates": "人気のテンプレート",
+    "featuredPremium": "おすすめプレミアム",
+    "latestReleases": "最新リリース",
+    "filters": "フィルター",
+    "price": "価格",
+    "rating": "評価",
+    "allPrices": "すべて",
+    "free": "無料",
+    "paid": "有料",
+    "allRatings": "すべての評価",
+    "sortBy": "並び替え",
+    "mostPopular": "人気順",
+    "newest": "新着順",
+    "highestRated": "評価順",
+    "priceLowToHigh": "価格：安い順",
+    "priceHighToLow": "価格：高い順",
+    "clearFilters": "フィルターをクリア",
+    "creatorCenter": "クリエイターセンター",
+    "install": "インストール",
+    "purchase": "購入",
+    "installing": "インストール中...",
+    "purchasing": "購入中...",
+    "fork": "フォーク",
+    "forking": "フォーク中...",
+    "popular": "人気",
+    "new": "新着",
+    "templatesCount": "{{count}}件のテンプレート"
+  },
+  "templateDetail": {
+    "title": "テンプレート詳細",
+    "description": "テンプレート情報の表示とインストール",
+    "backToStore": "ストアに戻る",
+    "overview": "概要",
+    "features": "機能",
+    "lineage": "系譜",
+    "reviews": "レビュー",
+    "aboutTemplate": "このテンプレートについて",
+    "templateInfo": "テンプレート情報",
+    "versionHistory": "バージョン履歴",
+    "relatedTemplates": "関連テンプレート",
+    "installTemplate": "テンプレートをインストール",
+    "purchaseTemplate": "テンプレートを購入",
+    "confirmInstallation": "インストールを確認",
+    "cancel": "キャンセル",
+    "oneTimePurchase": "一回限りの購入",
+    "paymentMethod": "支払い方法",
+    "accountBalance": "アカウント残高",
+    "creditCard": "クレジットカード（Stripe）",
+    "alipay": "Alipay",
+    "wechatPay": "WeChat Pay",
+    "verified": "認証済み",
+    "securePayment": "安全な支払い",
+    "instantDelivery": "即時配信",
+    "free": "無料",
+    "writeReview": "レビューを書く",
+    "submitReview": "レビューを送信",
+    "ratingSummary": "評価サマリー",
+    "helpful": "役に立った",
+    "report": "報告",
+    "ancestors": "祖先",
+    "forks": "フォーク",
+    "forkedFrom": "フォーク元",
+    "noAncestors": "祖先なし - これはオリジナルのテンプレートです",
+    "noLineage": "このテンプレートの系譜情報はありません",
+    "installs": "インストール数",
+    "updated": "更新日",
+    "author": "作者",
+    "category": "カテゴリ",
+    "version": "バージョン",
+    "slug": "スラッグ",
+    "created": "作成日",
+    "preview": "プレビュー",
+    "public": "公開",
+    "private": "非公開"
   }
 }

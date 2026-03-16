@@ -35,6 +35,7 @@ import {
   skillRegistryService,
   agentSkillService,
   agentMemoryService,
+  skillInstallerService,
 } from "../services/index.js";
 import { conflict, forbidden, notFound, unprocessable } from "../errors.js";
 import { assertBoard, assertCompanyAccess, getActorInfo } from "./authz.js";
@@ -69,6 +70,7 @@ export function agentRoutes(db: Db) {
   const agentToolSvc = agentToolService(db);
   const skillRegistrySvc = skillRegistryService(db);
   const agentSkillSvc = agentSkillService(db);
+  const skillInstallerSvc = skillInstallerService(db);
   const agentMemorySvc = agentMemoryService(db);
   const strictSecretsMode = process.env.Jigong_SECRETS_STRICT_MODE === "true";
 
@@ -1920,6 +1922,126 @@ export function agentRoutes(db: Db) {
     });
 
     res.json({ ok: true });
+  });
+
+  // ---------------------------------------------------------------------------
+  // External Skill Installation routes
+  // ---------------------------------------------------------------------------
+
+  // Install skill from external source (GitHub, skill.sh, SkillHub)
+  router.post("/companies/:companyId/skills/install-external", async (req, res) => {
+    const companyId = req.params.companyId as string;
+    assertCompanyAccess(req, companyId);
+    assertBoard(req);
+
+    const body = req.body;
+    if (!body.source || typeof body.source !== "string") {
+      res.status(400).json({ error: "source is required and must be a string" });
+      return;
+    }
+    if (!body.identifier || typeof body.identifier !== "string") {
+      res.status(400).json({ error: "identifier is required and must be a string" });
+      return;
+    }
+
+    const validSources = ["github", "skillsh", "skillhub"];
+    if (!validSources.includes(body.source)) {
+      res.status(422).json({
+        error: `Invalid source '${body.source}'. Must be one of: ${validSources.join(", ")}`,
+      });
+      return;
+    }
+
+    try {
+      let skill;
+      switch (body.source) {
+        case "github":
+          skill = await skillInstallerSvc.installFromGitHub(companyId, body.identifier);
+          break;
+        case "skillsh":
+          skill = await skillInstallerSvc.installFromSkillSh(companyId, body.identifier);
+          break;
+        case "skillhub":
+          skill = await skillInstallerSvc.installFromSkillHub(companyId, body.identifier);
+          break;
+        default:
+          res.status(422).json({ error: `Unsupported source: ${body.source}` });
+          return;
+      }
+
+      if (!skill) {
+        res.status(500).json({ error: "Failed to install skill" });
+        return;
+      }
+
+      const actor = getActorInfo(req);
+      await logActivity(db, {
+        companyId,
+        actorType: actor.actorType,
+        actorId: actor.actorId,
+        agentId: actor.agentId,
+        runId: actor.runId,
+        action: "skill.installed_external",
+        entityType: "skill_registry",
+        entityId: skill.id,
+        details: { source: body.source, identifier: body.identifier, name: skill.name },
+      });
+
+      res.status(201).json(skill);
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("already installed")) {
+        res.status(409).json({ error: err.message });
+        return;
+      }
+      throw err;
+    }
+  });
+
+  // Sync external skill (check for updates)
+  router.post("/companies/:companyId/skills/:skillId/sync", async (req, res) => {
+    const { companyId, skillId } = req.params;
+    assertCompanyAccess(req, companyId);
+    assertBoard(req);
+
+    try {
+      const skill = await skillInstallerSvc.syncExternalSkill(companyId, skillId);
+      res.json(skill);
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("not installed from an external source")) {
+        res.status(422).json({ error: err.message });
+        return;
+      }
+      throw err;
+    }
+  });
+
+  // List external skill sources for a company
+  router.get("/companies/:companyId/skills/sources", async (req, res) => {
+    const companyId = req.params.companyId as string;
+    assertCompanyAccess(req, companyId);
+
+    const sources = await skillInstallerSvc.listExternalSources(companyId);
+    res.json(sources);
+  });
+
+  // Search external skill registries
+  router.get("/companies/:companyId/skills/search-external", async (req, res) => {
+    const companyId = req.params.companyId as string;
+    assertCompanyAccess(req, companyId);
+
+    const source = typeof req.query.source === "string" ? req.query.source : "";
+    const query = typeof req.query.q === "string" ? req.query.q : "";
+
+    const validSources = ["github", "skillsh", "skillhub"];
+    if (!validSources.includes(source)) {
+      res.status(422).json({
+        error: `Invalid source '${source}'. Must be one of: ${validSources.join(", ")}`,
+      });
+      return;
+    }
+
+    const results = await skillInstallerSvc.searchExternalSkills(companyId, source as "github" | "skillsh" | "skillhub", query);
+    res.json({ results });
   });
 
   // ---------------------------------------------------------------------------

@@ -29,6 +29,9 @@ import { OrgChart } from "./pages/OrgChart";
 import { NewAgent } from "./pages/NewAgent";
 import { SkillStore } from "./pages/SkillStore";
 import { UserProfile } from "./pages/UserProfile";
+import { TemplateStore } from "./pages/TemplateStore";
+import { TemplateDetail } from "./pages/TemplateDetail";
+import { CreatorDashboard } from "./pages/CreatorDashboard";
 import { AuthPage } from "./pages/Auth";
 import { BoardClaimPage } from "./pages/BoardClaim";
 import { InviteLandingPage } from "./pages/InviteLanding";
@@ -137,6 +140,9 @@ function boardRoutes() {
       <Route path="inbox/all" element={<Inbox />} />
       <Route path="skills" element={<SkillStore />} />
       <Route path="profile" element={<UserProfile />} />
+      <Route path="templates" element={<TemplateStore />} />
+      <Route path="templates/:templateId" element={<TemplateDetail />} />
+      <Route path="creator" element={<CreatorDashboard />} />
       <Route path="design-guide" element={<DesignGuide />} />
     </>
   );

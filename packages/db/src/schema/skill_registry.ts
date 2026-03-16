@@ -23,6 +23,11 @@ export const skillRegistry = pgTable(
     version: text("version").notNull().default("1.0.0"),
     author: text("author"),
     isBuiltin: boolean("is_builtin").notNull().default(false),
+    // Source tracking for external skills
+    sourceType: text("source_type"), // skillsh, skillhub, github, null for manual
+    sourceUrl: text("source_url"),
+    externalId: text("external_id"), // ID in external system
+    lastSyncedAt: timestamp("last_synced_at", { withTimezone: true }),
     metadata: jsonb("metadata").$type<Record<string, unknown> | null>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

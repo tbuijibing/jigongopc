@@ -96,4 +96,16 @@ export const queryKeys = {
     dictionaries: (companyId: string, locale: string) => ["collaboration", "dictionaries", companyId, locale] as const,
   },
   skillStore: (companyId: string) => ["skill-store", companyId] as const,
+  templates: {
+    marketplace: (companyId: string, params?: Record<string, unknown>) =>
+      ["templates", "marketplace", companyId, params] as const,
+    search: (companyId: string, query: string, params?: Record<string, unknown>) =>
+      ["templates", "search", companyId, query, params] as const,
+    detail: (companyId: string, templateId: string) =>
+      ["templates", "detail", companyId, templateId] as const,
+    installed: (companyId: string) => ["templates", "installed", companyId] as const,
+    lineage: (companyId: string, templateId: string) =>
+      ["templates", "lineage", companyId, templateId] as const,
+    creatorRevenue: (companyId: string) => ["templates", "creator-revenue", companyId] as const,
+  },
 };
