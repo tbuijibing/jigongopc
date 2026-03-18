@@ -604,15 +604,15 @@ export function AgentDetail() {
       {/* Tab bar */}
       <nav className="flex items-center gap-1 border-b border-border overflow-x-auto">
         {([
-          { view: "overview" as const, label: "Overview", icon: LayoutDashboard },
-          { view: "heartbeat" as const, label: "Heartbeat", icon: HeartPulse },
-          { view: "soul" as const, label: "Soul", icon: Brain },
-          { view: "tools" as const, label: "Tools", icon: Wrench },
-          { view: "skills" as const, label: "Skills", icon: Sparkles },
-          { view: "memory" as const, label: "Memory", icon: Database },
-          { view: "controllers" as const, label: "Controllers", icon: Users },
-          { view: "configure" as const, label: "Configure", icon: Settings },
-          { view: "runs" as const, label: "Runs", icon: ActivityIcon },
+          { view: "overview" as const, label: t("agents.tabs.overview"), icon: LayoutDashboard },
+          { view: "heartbeat" as const, label: t("agents.tabs.heartbeat"), icon: HeartPulse },
+          { view: "soul" as const, label: t("agents.tabs.soul"), icon: Brain },
+          { view: "tools" as const, label: t("agents.tabs.tools"), icon: Wrench },
+          { view: "skills" as const, label: t("agents.tabs.skills"), icon: Sparkles },
+          { view: "memory" as const, label: t("agents.tabs.memory"), icon: Database },
+          { view: "controllers" as const, label: t("agents.tabs.controllers"), icon: Users },
+          { view: "configure" as const, label: t("agents.tabs.configure"), icon: Settings },
+          { view: "runs" as const, label: t("agents.tabs.runs"), icon: ActivityIcon },
         ] as const).map(({ view, label, icon: Icon }) => (
           <Link
             key={view}

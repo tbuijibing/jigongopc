@@ -209,6 +209,17 @@
         "process": "Process",
         "http": "HTTP"
       }
+    },
+    "tabs": {
+      "overview": "Overview",
+      "heartbeat": "Heartbeat",
+      "soul": "Soul",
+      "tools": "Tools",
+      "skills": "Skills",
+      "memory": "Memory",
+      "controllers": "Controllers",
+      "configure": "Configure",
+      "runs": "Runs"
     }
   },
   "approvals": {
