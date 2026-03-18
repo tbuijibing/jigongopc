@@ -220,6 +220,22 @@
       "controllers": "Controllers",
       "configure": "Configure",
       "runs": "Runs"
+    },
+    "actions": {
+      "assignTask": "Assign Task",
+      "runHeartbeat": "Run Heartbeat",
+      "pause": "Pause",
+      "resume": "Resume",
+      "terminate": "Terminate",
+      "loginToClaude": "Login to Claude Code"
+    },
+    "status": {
+      "active": "Active",
+      "running": "Running",
+      "paused": "Paused",
+      "idle": "Idle",
+      "error": "Error",
+      "terminated": "Terminated"
     }
   },
   "approvals": {

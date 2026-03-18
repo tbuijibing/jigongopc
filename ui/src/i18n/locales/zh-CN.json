@@ -239,6 +239,22 @@
       "controllers": "控制器",
       "configure": "配置",
       "runs": "运行记录"
+    },
+    "actions": {
+      "assignTask": "分配任务",
+      "runHeartbeat": "运行心跳",
+      "pause": "暂停",
+      "resume": "恢复",
+      "terminate": "终止",
+      "loginToClaude": "登录 Claude Code"
+    },
+    "status": {
+      "active": "活跃",
+      "running": "运行中",
+      "paused": "已暂停",
+      "idle": "空闲",
+      "error": "错误",
+      "terminated": "已终止"
     }
   },
   "approvals": {

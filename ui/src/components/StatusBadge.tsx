@@ -11,6 +11,13 @@ const STATUS_KEYS: Record<string, string> = {
   planned: "projects.newDialog.status.planned",
   completed: "projects.newDialog.status.completed",
   cancelled: "projects.newDialog.status.cancelled",
+  // Agent statuses
+  active: "agents.status.active",
+  running: "agents.status.running",
+  paused: "agents.status.paused",
+  idle: "agents.status.idle",
+  error: "agents.status.error",
+  terminated: "agents.status.terminated",
 };
 
 export function StatusBadge({ status }: { status: string }) {
