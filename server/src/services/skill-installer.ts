@@ -196,7 +196,15 @@ export function skillInstallerService(db: Db) {
 
       // Fetch SKILL.md from GitHub
       const rawUrl = buildGitHubRawUrl(owner, repo, path, branch);
-      const content = await fetchContent(rawUrl);
+      let content: string;
+      try {
+        content = await fetchContent(rawUrl);
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        throw unprocessable(
+          `Failed to fetch SKILL.md from GitHub: ${errorMsg}. URL: ${rawUrl}`,
+        );
+      }
 
       // Parse metadata
       const metadata = parseSkillFrontmatter(content);
@@ -205,7 +213,13 @@ export function skillInstallerService(db: Db) {
       }
 
       // Validate category
-      validateCategory(metadata.category);
+      try {
+        validateCategory(metadata.category);
+      } catch (error) {
+        throw unprocessable(
+          `Invalid skill category in SKILL.md: ${metadata.category}. ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
 
       const slug = generateSlug(metadata.name);
       const repoUrl = buildGitHubRepoUrl(owner, repo);
@@ -283,28 +297,45 @@ export function skillInstallerService(db: Db) {
       const rawUrl = `https://skill.sh/skills/${externalId}/SKILL.md`;
 
       let skillData;
+      let fetchError: string | null = null;
       try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
         skillData = await response.json();
-      } catch {
+      } catch (apiErr) {
         // Fallback: fetch raw markdown directly
-        const content = await fetchContent(rawUrl);
-        const metadata = parseSkillFrontmatter(content);
+        try {
+          const content = await fetchContent(rawUrl);
+          const metadata = parseSkillFrontmatter(content);
 
-        skillData = {
-          name: metadata.name || externalId,
-          description: metadata.description,
-          category: metadata.category,
-          version: metadata.version,
-          author: metadata.author,
-          content,
-        };
+          skillData = {
+            name: metadata.name || externalId,
+            description: metadata.description,
+            category: metadata.category,
+            version: metadata.version,
+            author: metadata.author,
+            content,
+          };
+        } catch (fallbackErr) {
+          fetchError = `API error: ${apiErr instanceof Error ? apiErr.message : String(apiErr)}; Fallback error: ${fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr)}`;
+        }
       }
 
-      validateCategory(skillData.category || "custom");
+      if (!skillData) {
+        throw unprocessable(
+          `Failed to fetch skill from skill.sh: ${fetchError}. Slug: ${externalId}`,
+        );
+      }
+
+      try {
+        validateCategory(skillData.category || "custom");
+      } catch (error) {
+        throw unprocessable(
+          `Invalid skill category: ${skillData.category || "custom"}. ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
 
       const slug = generateSlug(skillData.name);
       const sourceUrl = `https://skill.sh/skills/${externalId}`;
@@ -371,14 +402,27 @@ export function skillInstallerService(db: Db) {
       // Note: This is a placeholder for the actual SkillHub API
       const apiUrl = `https://api.skillhub.dev/v1/skills/${externalId}`;
 
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw unprocessable(`Failed to fetch skill from SkillHub: HTTP ${response.status}`);
+      let skillData;
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        skillData = await response.json();
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        throw unprocessable(
+          `Failed to fetch skill from SkillHub: ${errorMsg}. API URL: ${apiUrl}`,
+        );
       }
 
-      const skillData = await response.json();
-
-      validateCategory(skillData.category || "custom");
+      try {
+        validateCategory(skillData.category || "custom");
+      } catch (error) {
+        throw unprocessable(
+          `Invalid skill category: ${skillData.category || "custom"}. ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
 
       const slug = generateSlug(skillData.name);
       const sourceUrl = `https://skillhub.dev/skills/${externalId}`;

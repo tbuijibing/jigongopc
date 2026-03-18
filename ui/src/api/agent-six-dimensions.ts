@@ -150,8 +150,10 @@ export const agentSixDimensionApi = {
     api.delete<{ ok: true }>(`/companies/${companyId}/agents/${agentId}/tools/${toolId}`),
 
   // Skills (agent-level)
-  listSkills: (companyId: string, agentId: string) =>
-    api.get<AgentSkill[]>(`/companies/${companyId}/agents/${agentId}/skills`),
+  listSkills: async (companyId: string, agentId: string) => {
+    const result = await api.get<{ source: string; skills: AgentSkill[] }>(`/companies/${companyId}/agents/${agentId}/skills`);
+    return result.skills;
+  },
   installSkill: (companyId: string, agentId: string, data: { skillId: string }) =>
     api.post<AgentSkill>(`/companies/${companyId}/agents/${agentId}/skills/install`, data),
   uninstallSkill: (companyId: string, agentId: string, skillId: string) =>

@@ -17,7 +17,7 @@ import {
 import { cn, formatDate } from "@/lib/utils";
 import { queryKeys } from "@/lib/queryKeys";
 import { useCompany } from "@/context/CompanyContext";
-import { client } from "@/api/client";
+import { api } from "@/api/client";
 import {
   Card,
   CardHeader,
@@ -83,11 +83,10 @@ async function fetchTemplateLineage(
   companyId: string,
   templateId: string
 ): Promise<TemplateLineageData> {
-  const response = await client.get(
-    `/v1/marketplace/company-templates/${templateId}/lineage`,
-    { params: { companyId } }
+  const response = await api.get<{ data: TemplateLineageData }>(
+    `/v1/marketplace/company-templates/${templateId}/lineage?companyId=${companyId}`
   );
-  return response.data.data;
+  return response.data;
 }
 
 // =============================================================================

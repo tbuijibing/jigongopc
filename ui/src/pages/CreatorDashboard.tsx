@@ -970,7 +970,7 @@ export function CreatorDashboard() {
                       <p className="text-sm text-muted-foreground">
                         {t("creatorDashboard.earnMore", {
                           amount: formatCents(revenue.tierProgress.next - revenue.tierProgress.current),
-                          tier: TIER_CONFIG[tierInfo.nextTier!].label,
+                          tier: TIER_CONFIG[tierInfo.nextTier! as keyof typeof TIER_CONFIG]?.label ?? "Next Tier",
                         })}
                       </p>
                     </div>
@@ -1061,7 +1061,7 @@ export function CreatorDashboard() {
                           <p className="text-sm text-muted-foreground">
                             {t("creatorDashboard.nextBenefits")}
                           </p>
-                          <p className="text-sm">{TIER_CONFIG[config.nextTier].benefits.length} {t("creatorDashboard.benefits")}</p>
+                          <p className="text-sm">{TIER_CONFIG[config.nextTier as keyof typeof TIER_CONFIG]?.benefits.length ?? 0} {t("creatorDashboard.benefits")}</p>
                         </div>
                       )}
                     </div>
