@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { agentSixDimensionApi, type HeartbeatConfig } from "../api/agent-six-dimensions";
 import { queryKeys } from "../lib/queryKeys";
@@ -39,6 +40,7 @@ function configToForm(c: HeartbeatConfig): FormState {
 }
 
 export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -65,7 +67,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
       setForm(null);
     },
     onError: (err) => {
-      setSaveError(err instanceof Error ? err.message : "Failed to save heartbeat config");
+      setSaveError(err instanceof Error ? err.message : t("agents.detail.heartbeat.errorSave"));
     },
   });
 
@@ -105,13 +107,13 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
           checked={form.enabled}
           onCheckedChange={(v) => setField("enabled", v === true)}
         />
-        <Label htmlFor="hb-enabled">Enabled</Label>
+        <Label htmlFor="hb-enabled">{t("agents.detail.heartbeat.enabled")}</Label>
       </div>
 
       {/* Numeric fields */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="hb-interval">Interval (sec)</Label>
+          <Label htmlFor="hb-interval">{t("agents.detail.heartbeat.interval")}</Label>
           <Input
             id="hb-interval"
             type="number"
@@ -121,7 +123,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="hb-maxConcurrent">Max Concurrent Runs</Label>
+          <Label htmlFor="hb-maxConcurrent">{t("agents.detail.heartbeat.maxConcurrent")}</Label>
           <Input
             id="hb-maxConcurrent"
             type="number"
@@ -131,7 +133,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="hb-timeout">Timeout (sec)</Label>
+          <Label htmlFor="hb-timeout">{t("agents.detail.heartbeat.timeout")}</Label>
           <Input
             id="hb-timeout"
             type="number"
@@ -141,7 +143,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="hb-cooldown">Cooldown (sec)</Label>
+          <Label htmlFor="hb-cooldown">{t("agents.detail.heartbeat.cooldown")}</Label>
           <Input
             id="hb-cooldown"
             type="number"
@@ -154,14 +156,14 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
 
       {/* Wake triggers */}
       <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">Wake Triggers</legend>
+        <legend className="text-sm font-medium">{t("agents.detail.heartbeat.wakeTriggers")}</legend>
         <div className="flex items-center gap-3">
           <Checkbox
             id="hb-wakeAssign"
             checked={form.wakeOnAssignment}
             onCheckedChange={(v) => setField("wakeOnAssignment", v === true)}
           />
-          <Label htmlFor="hb-wakeAssign">Wake on Assignment</Label>
+          <Label htmlFor="hb-wakeAssign">{t("agents.detail.heartbeat.wakeOnAssignment")}</Label>
         </div>
         <div className="flex items-center gap-3">
           <Checkbox
@@ -169,7 +171,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
             checked={form.wakeOnMention}
             onCheckedChange={(v) => setField("wakeOnMention", v === true)}
           />
-          <Label htmlFor="hb-wakeMention">Wake on Mention</Label>
+          <Label htmlFor="hb-wakeMention">{t("agents.detail.heartbeat.wakeOnMention")}</Label>
         </div>
         <div className="flex items-center gap-3">
           <Checkbox
@@ -177,7 +179,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
             checked={form.wakeOnDemand}
             onCheckedChange={(v) => setField("wakeOnDemand", v === true)}
           />
-          <Label htmlFor="hb-wakeDemand">Wake on Demand</Label>
+          <Label htmlFor="hb-wakeDemand">{t("agents.detail.heartbeat.wakeOnDemand")}</Label>
         </div>
       </fieldset>
 
@@ -187,7 +189,7 @@ export function HeartbeatTab({ agentId, companyId }: HeartbeatTabProps) {
       {/* Save button */}
       <Button onClick={handleSave} disabled={mutation.isPending}>
         {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Save
+        {t("agents.detail.heartbeat.save")}
       </Button>
     </div>
   );

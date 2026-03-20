@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { agentSixDimensionApi, type Soul } from "../api/agent-six-dimensions";
 import { queryKeys } from "../lib/queryKeys";
@@ -33,6 +34,7 @@ function soulToForm(s: Soul): FormState {
 }
 
 export function SoulTab({ agentId, companyId }: SoulTabProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export function SoulTab({ agentId, companyId }: SoulTabProps) {
       setForm(null);
     },
     onError: (err) => {
-      setSaveError(err instanceof Error ? err.message : "Failed to save soul");
+      setSaveError(err instanceof Error ? err.message : t("agents.detail.soul.errorSave"));
     },
   });
 
@@ -101,66 +103,66 @@ export function SoulTab({ agentId, companyId }: SoulTabProps) {
       {/* Version display (read-only) */}
       {soul && (
         <p className="text-sm text-muted-foreground">
-          Version: <span className="font-medium text-foreground">{soul.version}</span>
+          {t("agents.detail.soul.version")}: <span className="font-medium text-foreground">{soul.version}</span>
         </p>
       )}
 
       {/* System Prompt */}
       <div className="space-y-1.5">
-        <Label htmlFor="soul-systemPrompt">System Prompt</Label>
+        <Label htmlFor="soul-systemPrompt">{t("agents.detail.soul.systemPrompt")}</Label>
         <Textarea
           id="soul-systemPrompt"
           rows={8}
           value={form.systemPrompt}
           onChange={(e) => setField("systemPrompt", e.target.value)}
-          placeholder="Enter the system prompt for this agent..."
+          placeholder={t("agents.detail.soul.systemPromptHelp")}
         />
       </div>
 
       {/* Personality */}
       <div className="space-y-1.5">
-        <Label htmlFor="soul-personality">Personality</Label>
+        <Label htmlFor="soul-personality">{t("agents.detail.soul.personality")}</Label>
         <Textarea
           id="soul-personality"
           rows={3}
           value={form.personality}
           onChange={(e) => setField("personality", e.target.value)}
-          placeholder="Describe the agent's personality traits..."
+          placeholder={t("agents.detail.soul.personalityHelp")}
         />
       </div>
 
       {/* Constraints */}
       <div className="space-y-1.5">
-        <Label htmlFor="soul-constraints">Constraints</Label>
+        <Label htmlFor="soul-constraints">{t("agents.detail.soul.constraints")}</Label>
         <Textarea
           id="soul-constraints"
           rows={3}
           value={form.constraints}
           onChange={(e) => setField("constraints", e.target.value)}
-          placeholder="Define behavioral constraints..."
+          placeholder={t("agents.detail.soul.constraintsHelp")}
         />
       </div>
 
       {/* Output Format */}
       <div className="space-y-1.5">
-        <Label htmlFor="soul-outputFormat">Output Format</Label>
+        <Label htmlFor="soul-outputFormat">{t("agents.detail.soul.outputFormat")}</Label>
         <Textarea
           id="soul-outputFormat"
           rows={3}
           value={form.outputFormat}
           onChange={(e) => setField("outputFormat", e.target.value)}
-          placeholder="Specify preferred output format..."
+          placeholder={t("agents.detail.soul.outputFormatHelp")}
         />
       </div>
 
       {/* Language */}
       <div className="space-y-1.5">
-        <Label htmlFor="soul-language">Language</Label>
+        <Label htmlFor="soul-language">{t("agents.detail.soul.language")}</Label>
         <Input
           id="soul-language"
           value={form.language}
           onChange={(e) => setField("language", e.target.value)}
-          placeholder="e.g. en, zh, ja"
+          placeholder={t("agents.detail.soul.languageHelp")}
         />
       </div>
 
@@ -170,7 +172,7 @@ export function SoulTab({ agentId, companyId }: SoulTabProps) {
       {/* Save button */}
       <Button onClick={handleSave} disabled={mutation.isPending}>
         {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Save
+        {t("agents.detail.soul.save")}
       </Button>
     </div>
   );

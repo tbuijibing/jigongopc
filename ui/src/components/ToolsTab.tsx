@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   agentSixDimensionApi,
@@ -45,6 +46,7 @@ const emptyForm: CreateToolInput & { enabled: boolean } = {
 };
 
 export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ ...emptyForm });
@@ -171,7 +173,7 @@ export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
                   aria-label={`Toggle ${tool.name}`}
                 />
                 <span className="text-xs text-muted-foreground w-16">
-                  {tool.enabled ? "Enabled" : "Disabled"}
+                  {tool.enabled ? t("common.enabled") : t("common.disabled")}
                 </span>
                 <Button
                   variant="ghost"
@@ -187,25 +189,25 @@ export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">No tools configured yet.</p>
+        <p className="text-sm text-muted-foreground">{t("agents.detail.tools.noTools")}</p>
       )}
 
       {/* Add tool toggle */}
       {!showForm && (
         <Button variant="outline" size="sm" onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-1" />
-          Add Tool
+          {t("agents.detail.tools.addTool")}
         </Button>
       )}
 
       {/* Add tool form */}
       {showForm && (
         <div className="rounded-lg border border-border p-4 space-y-4">
-          <h3 className="text-sm font-medium">New Tool</h3>
+          <h3 className="text-sm font-medium">{t("agents.detail.tools.newTool")}</h3>
 
           {/* Tool Type */}
           <div className="space-y-1.5">
-            <Label htmlFor="tool-type">Type</Label>
+            <Label htmlFor="tool-type">{t("agents.detail.tools.type")}</Label>
             <Select
               value={form.toolType}
               onValueChange={(v) =>
@@ -216,9 +218,9 @@ export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {TOOL_TYPES.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
+                {TOOL_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -227,35 +229,35 @@ export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
 
           {/* Name */}
           <div className="space-y-1.5">
-            <Label htmlFor="tool-name">Name</Label>
+            <Label htmlFor="tool-name">{t("agents.detail.tools.name")}</Label>
             <Input
               id="tool-name"
               value={form.name}
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-              placeholder="e.g. web-search"
+              placeholder={t("agents.detail.tools.nameHelp")}
             />
           </div>
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label htmlFor="tool-desc">Description</Label>
+            <Label htmlFor="tool-desc">{t("agents.detail.tools.description")}</Label>
             <Input
               id="tool-desc"
               value={form.description ?? ""}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-              placeholder="What does this tool do?"
+              placeholder={t("agents.detail.tools.descriptionHelp")}
             />
           </div>
 
           {/* Config (JSON) */}
           <div className="space-y-1.5">
-            <Label htmlFor="tool-config">Config (JSON)</Label>
+            <Label htmlFor="tool-config">{t("agents.detail.tools.config")}</Label>
             <Textarea
               id="tool-config"
               rows={4}
               value={configText}
               onChange={(e) => setConfigText(e.target.value)}
-              placeholder='{"endpoint": "https://..."}'
+              placeholder={t("agents.detail.tools.configHelp")}
               className="font-mono text-xs"
             />
           </div>
@@ -267,14 +269,14 @@ export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
               checked={form.enabled}
               onCheckedChange={(v) => setForm((prev) => ({ ...prev, enabled: v === true }))}
             />
-            <Label htmlFor="tool-enabled">Enabled</Label>
+            <Label htmlFor="tool-enabled">{t("agents.detail.tools.enabled")}</Label>
           </div>
 
           {/* Actions */}
           <div className="flex gap-2">
             <Button onClick={handleCreate} disabled={createMutation.isPending || !form.name.trim()}>
               {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create
+              {t("agents.detail.tools.save")}
             </Button>
             <Button
               variant="ghost"
@@ -285,7 +287,7 @@ export function ToolsTab({ agentId, companyId }: ToolsTabProps) {
                 setActionError(null);
               }}
             >
-              Cancel
+              {t("agents.detail.tools.cancel")}
             </Button>
           </div>
         </div>

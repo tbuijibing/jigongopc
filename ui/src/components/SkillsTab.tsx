@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   agentSixDimensionApi,
@@ -24,6 +25,7 @@ interface SkillsTabProps {
 }
 
 export function SkillsTab({ agentId, companyId }: SkillsTabProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [storeOpen, setStoreOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -68,7 +70,8 @@ export function SkillsTab({ agentId, companyId }: SkillsTabProps) {
 
   // --- Handlers ---
   function handleUninstall(skill: AgentSkill) {
-    if (!confirm(`Uninstall skill "${skill.name ?? skill.skillId}"? This cannot be undone.`)) return;
+    const skillName = skill.name ?? skill.skillId;
+    if (!confirm(t("agents.detail.skills.confirmUninstall", { skillName }))) return;
     uninstallMutation.mutate(skill.id);
   }
 
@@ -110,22 +113,22 @@ export function SkillsTab({ agentId, companyId }: SkillsTabProps) {
               <div className="flex items-center gap-3 min-w-0">
                 <Badge variant="secondary">{skill.category ?? "general"}</Badge>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{skill.name ?? skill.skillId}</p>
+                  <p className="text-sm font-medium truncate">{skill.skillName ?? skill.name ?? skill.skillId}</p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {skill.installType}
+                    {skill.skillCategory ?? skill.category ?? skill.installType}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <Badge variant={skill.enabled ? "default" : "outline"}>
-                  {skill.enabled ? "Enabled" : "Disabled"}
+                  {skill.enabled ? t("common.enabled") : t("common.disabled")}
                 </Badge>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handleUninstall(skill)}
                   disabled={isMutating}
-                  aria-label={`Uninstall ${skill.name ?? skill.skillId}`}
+                  aria-label={t("agents.detail.skills.uninstall")}
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
@@ -134,21 +137,21 @@ export function SkillsTab({ agentId, companyId }: SkillsTabProps) {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">No skills installed yet.</p>
+        <p className="text-sm text-muted-foreground">{t("agents.detail.skills.noSkills")}</p>
       )}
 
       {/* Install Skill button */}
       <Button variant="outline" size="sm" onClick={() => setStoreOpen(true)}>
         <Plus className="h-4 w-4 mr-1" />
-        Install Skill
+        {t("agents.detail.skills.install")}
       </Button>
 
       {/* Skill Store Dialog */}
       <Dialog open={storeOpen} onOpenChange={setStoreOpen}>
         <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Skill Store</DialogTitle>
-            <DialogDescription>Browse and install skills for this agent.</DialogDescription>
+            <DialogTitle>{t("agents.detail.skills.skillStore")}</DialogTitle>
+            <DialogDescription>{t("agents.detail.skills.description")}</DialogDescription>
           </DialogHeader>
 
           {storeLoading ? (
@@ -186,9 +189,9 @@ export function SkillsTab({ agentId, companyId }: SkillsTabProps) {
                       {installMutation.isPending ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : alreadyInstalled ? (
-                        "Installed"
+                        t("agents.detail.skills.installed")
                       ) : (
-                        "Install"
+                        t("agents.detail.skills.install")
                       )}
                     </Button>
                   </div>
@@ -198,7 +201,7 @@ export function SkillsTab({ agentId, companyId }: SkillsTabProps) {
           ) : (
             <div className="text-center py-6 text-sm text-muted-foreground">
               <Sparkles className="h-8 w-8 mx-auto mb-2 opacity-40" />
-              No skills available in the store.
+              {t("agents.detail.skills.noSkillsInStore")}
             </div>
           )}
         </DialogContent>

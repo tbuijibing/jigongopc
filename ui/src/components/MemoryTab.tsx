@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   agentSixDimensionApi,
@@ -59,6 +60,7 @@ function truncateValue(value: string, maxLen = 80): string {
 }
 
 export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [layerFilter, setLayerFilter] = useState<MemoryLayerFilter>("all");
   const [showForm, setShowForm] = useState(false);
@@ -85,7 +87,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
       setExpiresAtText("");
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to create memory");
+      setActionError(err instanceof Error ? err.message : t("agents.detail.memory.errorCreate"));
     },
   });
 
@@ -98,7 +100,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
       setEditState(null);
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to update memory");
+      setActionError(err instanceof Error ? err.message : t("agents.detail.memory.errorUpdate"));
     },
   });
 
@@ -110,7 +112,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
       queryClient.invalidateQueries({ queryKey: queryKeys.agents.memories(agentId) });
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to delete memory");
+      setActionError(err instanceof Error ? err.message : t("agents.detail.memory.errorDelete"));
     },
   });
 
@@ -131,7 +133,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
   }
 
   function handleDelete(memory: AgentMemory) {
-    if (!confirm(`Delete memory "${memory.key}"? This cannot be undone.`)) return;
+    if (!confirm(t("agents.detail.memory.confirmDelete", { memoryKey: memory.key }))) return;
     deleteMutation.mutate(memory.id);
   }
 
@@ -181,7 +183,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
 
       {/* Layer filter */}
       <div className="flex items-center gap-3">
-        <Label htmlFor="memory-layer-filter">Filter by layer</Label>
+        <Label htmlFor="memory-layer-filter">{t("agents.detail.memory.filterByLayer")}</Label>
         <Select
           value={layerFilter}
           onValueChange={(v) => setLayerFilter(v as MemoryLayerFilter)}
@@ -190,9 +192,9 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">{t("agents.detail.memory.filterAll")}</SelectItem>
             {MEMORY_LAYERS.map((l) => (
-              <SelectItem key={l} value={l}>{l}</SelectItem>
+              <SelectItem key={l} value={l}>{t(`agents.detail.memory.layer${l.charAt(0).toUpperCase() + l.slice(1)}`)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -210,7 +212,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                 /* Inline edit form */
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label>Value</Label>
+                    <Label>{t("agents.detail.memory.value")}</Label>
                     <Textarea
                       rows={3}
                       value={editState.value}
@@ -219,7 +221,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                   </div>
                   <div className="flex gap-4">
                     <div className="space-y-1.5 flex-1">
-                      <Label>Importance (1-10)</Label>
+                      <Label>{t("agents.detail.memory.importance")}</Label>
                       <Input
                         type="number"
                         min={1}
@@ -231,7 +233,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                       />
                     </div>
                     <div className="space-y-1.5 flex-1">
-                      <Label>Expires At</Label>
+                      <Label>{t("agents.detail.memory.expiresAt")}</Label>
                       <Input
                         type="datetime-local"
                         value={editState.expiresAt}
@@ -244,10 +246,10 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                   <div className="flex gap-2">
                     <Button size="sm" onClick={handleSaveEdit} disabled={updateMutation.isPending}>
                       {updateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Save
+                      {t("agents.detail.memory.save")}
                     </Button>
                     <Button size="sm" variant="ghost" onClick={() => setEditState(null)}>
-                      Cancel
+                      {t("agents.detail.memory.cancel")}
                     </Button>
                   </div>
                 </div>
@@ -256,8 +258,12 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                 <>
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2 min-w-0">
-                      <Badge variant={layerBadgeVariant[memory.memoryLayer]}>{memory.memoryLayer}</Badge>
-                      <Badge variant="outline">{memory.memoryType}</Badge>
+                      <Badge variant={layerBadgeVariant[memory.memoryLayer]}>
+                        {t(`agents.detail.memory.layer_${memory.memoryLayer}`)}
+                      </Badge>
+                      <Badge variant="outline">
+                        {t(`agents.detail.memory.type_${memory.memoryType}`)}
+                      </Badge>
                       <p className="text-sm font-medium truncate">{memory.key}</p>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
@@ -283,9 +289,9 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                   </div>
                   <p className="text-xs text-muted-foreground">{truncateValue(memory.value)}</p>
                   <div className="flex gap-4 text-xs text-muted-foreground">
-                    <span>Importance: {memory.importance}</span>
-                    <span>Access: {memory.accessCount}</span>
-                    {memory.expiresAt && <span>Expires: {new Date(memory.expiresAt).toLocaleString()}</span>}
+                    <span>{t("agents.detail.memory.importance")}: {memory.importance}</span>
+                    <span>{t("agents.detail.memory.accessCount")}: {memory.accessCount}</span>
+                    {memory.expiresAt && <span>{t("agents.detail.memory.expires")}: {new Date(memory.expiresAt).toLocaleString()}</span>}
                   </div>
                 </>
               )}
@@ -293,14 +299,14 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">No memories stored yet.</p>
+        <p className="text-sm text-muted-foreground">{t("agents.detail.memory.noMemories")}</p>
       )}
 
       {/* Add memory toggle */}
       {!showForm && (
         <Button variant="outline" size="sm" onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-1" />
-          Add Memory
+          {t("agents.detail.memory.addMemory")}
         </Button>
       )}
 
@@ -308,7 +314,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
       {showForm && (
         <div className="rounded-lg border border-border p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">New Memory</h3>
+            <h3 className="text-sm font-medium">{t("agents.detail.memory.newMemory")}</h3>
             <Button
               variant="ghost"
               size="icon"
@@ -325,30 +331,30 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
 
           {/* Key */}
           <div className="space-y-1.5">
-            <Label htmlFor="mem-key">Key</Label>
+            <Label htmlFor="mem-key">{t("agents.detail.memory.key")}</Label>
             <Input
               id="mem-key"
               value={form.key}
               onChange={(e) => setForm((prev) => ({ ...prev, key: e.target.value }))}
-              placeholder="e.g. preferred-language"
+              placeholder={t("agents.detail.memory.keyHelp")}
             />
           </div>
 
           {/* Value */}
           <div className="space-y-1.5">
-            <Label htmlFor="mem-value">Value</Label>
+            <Label htmlFor="mem-value">{t("agents.detail.memory.value")}</Label>
             <Textarea
               id="mem-value"
               rows={3}
               value={form.value}
               onChange={(e) => setForm((prev) => ({ ...prev, value: e.target.value }))}
-              placeholder="Memory content"
+              placeholder={t("agents.detail.memory.valueHelp")}
             />
           </div>
 
           {/* Memory Layer */}
           <div className="space-y-1.5">
-            <Label htmlFor="mem-layer">Memory Layer</Label>
+            <Label htmlFor="mem-layer">{t("agents.detail.memory.layer")}</Label>
             <Select
               value={form.memoryLayer}
               onValueChange={(v) =>
@@ -360,7 +366,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
               </SelectTrigger>
               <SelectContent>
                 {MEMORY_LAYERS.map((l) => (
-                  <SelectItem key={l} value={l}>{l}</SelectItem>
+                  <SelectItem key={l} value={l}>{t(`agents.detail.memory.layer${l.charAt(0).toUpperCase() + l.slice(1)}`)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -369,7 +375,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
           {/* Scope ID — only for project/task layers */}
           {(form.memoryLayer === "project" || form.memoryLayer === "task") && (
             <div className="space-y-1.5">
-              <Label htmlFor="mem-scope">Scope ID</Label>
+              <Label htmlFor="mem-scope">{t("agents.detail.memory.scopeId")}</Label>
               <Input
                 id="mem-scope"
                 value={form.scopeId ?? ""}
@@ -381,7 +387,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
 
           {/* Memory Type */}
           <div className="space-y-1.5">
-            <Label htmlFor="mem-type">Memory Type</Label>
+            <Label htmlFor="mem-type">{t("agents.detail.memory.type")}</Label>
             <Select
               value={form.memoryType ?? "fact"}
               onValueChange={(v) =>
@@ -392,8 +398,8 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {MEMORY_TYPES.map((t) => (
-                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                {MEMORY_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>{t(`agents.detail.memory.type${type.charAt(0).toUpperCase() + type.slice(1)}`)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -401,7 +407,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
 
           {/* Importance */}
           <div className="space-y-1.5">
-            <Label htmlFor="mem-importance">Importance (1-10)</Label>
+            <Label htmlFor="mem-importance">{t("agents.detail.memory.importance")}</Label>
             <Input
               id="mem-importance"
               type="number"
@@ -414,7 +420,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
 
           {/* Expires At */}
           <div className="space-y-1.5">
-            <Label htmlFor="mem-expires">Expires At</Label>
+            <Label htmlFor="mem-expires">{t("agents.detail.memory.expiresAt")}</Label>
             <Input
               id="mem-expires"
               type="datetime-local"
@@ -430,7 +436,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
               disabled={createMutation.isPending || !form.key.trim() || !form.value.trim()}
             >
               {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create
+              {t("agents.detail.memory.save")}
             </Button>
             <Button
               variant="ghost"
@@ -441,7 +447,7 @@ export function MemoryTab({ agentId, companyId }: MemoryTabProps) {
                 setActionError(null);
               }}
             >
-              Cancel
+              {t("agents.detail.memory.cancel")}
             </Button>
           </div>
         </div>

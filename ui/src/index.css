@@ -498,3 +498,67 @@ a.Jigong-project-mention-chip {
 .Jigong-mdxeditor [class*="_toolbarNodeKindSelectContainer_"] {
   z-index: 81 !important;
 }
+
+/* Agent Avatar Animations */
+@keyframes avatar-pulse-active {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+}
+
+@keyframes avatar-ping-running {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.1); opacity: 0; }
+}
+
+@keyframes avatar-fade-paused {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes avatar-bounce-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes avatar-shake-error {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+@keyframes avatar-icon-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.avatar-active {
+  animation: avatar-pulse-active 2s ease-in-out infinite;
+}
+
+.avatar-running {
+  animation: avatar-ping-running 1.5s ease-out infinite;
+}
+
+.avatar-paused {
+  animation: avatar-fade-paused 2s ease-in-out infinite;
+}
+
+.avatar-idle {
+  animation: avatar-bounce-idle 2s ease-in-out infinite;
+}
+
+.avatar-error {
+  animation: avatar-shake-error 0.8s ease-in-out infinite;
+}
+
+.avatar-terminated {
+  /* No animation for terminated state */
+}
+
+.animate-ping-slow {
+  animation: avatar-ping-running 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-icon-bounce {
+  animation: avatar-icon-bounce 1.5s ease-in-out infinite;
+}

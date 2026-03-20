@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   humanAgentControlsApi,
@@ -27,19 +28,20 @@ interface ControllersTabProps {
 }
 
 const PERMISSION_KEYS = [
-  { key: "canWakeup", label: "Wake Up" },
-  { key: "canPause", label: "Pause" },
-  { key: "canTerminate", label: "Terminate" },
-  { key: "canConfigure", label: "Configure" },
-  { key: "canViewLogs", label: "View Logs" },
-  { key: "canAssignTasks", label: "Assign Tasks" },
-  { key: "canManageMemory", label: "Manage Memory" },
-  { key: "canInstallSkills", label: "Install Skills" },
+  { key: "canWakeup", labelKey: "agents.detail.controllers.permissionWakeUp" },
+  { key: "canPause", labelKey: "agents.detail.controllers.permissionPause" },
+  { key: "canTerminate", labelKey: "agents.detail.controllers.permissionTerminate" },
+  { key: "canConfigure", labelKey: "agents.detail.controllers.permissionConfigure" },
+  { key: "canViewLogs", labelKey: "agents.detail.controllers.permissionViewLogs" },
+  { key: "canAssignTasks", labelKey: "agents.detail.controllers.permissionAssignTasks" },
+  { key: "canManageMemory", labelKey: "agents.detail.controllers.permissionManageMemory" },
+  { key: "canInstallSkills", labelKey: "agents.detail.controllers.permissionInstallSkills" },
 ] as const;
 
 type PermissionKey = (typeof PERMISSION_KEYS)[number]["key"];
 
 export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [userId, setUserId] = useState("");
@@ -76,7 +78,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
       resetForm();
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to add controller");
+      setActionError(err instanceof Error ? err.message : t("agents.detail.controllers.errorAdd"));
     },
   });
 
@@ -88,7 +90,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
       queryClient.invalidateQueries({ queryKey: queryKeys.agents.controllers(agentId) });
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to update controller");
+      setActionError(err instanceof Error ? err.message : t("agents.detail.controllers.errorUpdate"));
     },
   });
 
@@ -100,7 +102,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
       queryClient.invalidateQueries({ queryKey: queryKeys.agents.controllers(agentId) });
     },
     onError: (err) => {
-      setActionError(err instanceof Error ? err.message : "Failed to remove controller");
+      setActionError(err instanceof Error ? err.message : t("agents.detail.controllers.errorRemove"));
     },
   });
 
@@ -157,7 +159,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
   }
 
   function handleDelete(ctrl: HumanAgentControl) {
-    if (!confirm(`Remove controller "${ctrl.userId}"? This cannot be undone.`)) return;
+    if (!confirm(t("agents.detail.controllers.confirmRemove", { userId: ctrl.userId === "local-board" ? "Board" : ctrl.userId.slice(0, 12) }))) return;
     deleteMutation.mutate(ctrl.id);
   }
 
@@ -196,7 +198,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
                     {ctrl.userId === "local-board" ? "Board" : ctrl.userId.slice(0, 12)}
                   </span>
                   {ctrl.isPrimary && (
-                    <Badge variant="default" className="text-[10px]">Primary</Badge>
+                    <Badge variant="default" className="text-[10px]">{t("agents.detail.controllers.primary")}</Badge>
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -205,9 +207,9 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
                       checked={ctrl.isPrimary}
                       onCheckedChange={() => handleTogglePrimary(ctrl)}
                       disabled={isMutating}
-                      aria-label="Toggle primary"
+                      aria-label={t("agents.detail.controllers.togglePrimary")}
                     />
-                    <span className="text-[10px] text-muted-foreground">Primary</span>
+                    <span className="text-[10px] text-muted-foreground">{t("agents.detail.controllers.primary")}</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -222,7 +224,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
               </div>
 
               <div className="flex flex-wrap gap-1.5">
-                {PERMISSION_KEYS.map(({ key, label }) => {
+                {PERMISSION_KEYS.map(({ key, labelKey }) => {
                   const enabled = ctrl.permissions[key] ?? false;
                   return (
                     <button
@@ -236,7 +238,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
                       onClick={() => handleTogglePermission(ctrl, key)}
                       disabled={isMutating}
                     >
-                      {label}
+                      {t(labelKey)}
                     </button>
                   );
                 })}
@@ -245,30 +247,30 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">No controllers assigned yet.</p>
+        <p className="text-sm text-muted-foreground">{t("agents.detail.controllers.noControllers")}</p>
       )}
 
       {!showForm && (
         <Button variant="outline" size="sm" onClick={() => setShowForm(true)}>
           <Plus className="h-4 w-4 mr-1" />
-          Add Controller
+          {t("agents.detail.controllers.addController")}
         </Button>
       )}
 
       {showForm && (
         <div className="rounded-lg border border-border p-4 space-y-4">
-          <h3 className="text-sm font-medium">New Controller</h3>
+          <h3 className="text-sm font-medium">{t("agents.detail.controllers.newController")}</h3>
 
           <div className="space-y-1.5">
-            <Label htmlFor="ctrl-user">User</Label>
+            <Label htmlFor="ctrl-user">{t("agents.detail.controllers.user")}</Label>
             {membersLoading ? (
               <Skeleton className="h-10 w-full" />
             ) : availableUsers.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No available users to add</p>
+              <p className="text-sm text-muted-foreground">{t("agents.detail.controllers.noAvailableUsers")}</p>
             ) : (
               <Select value={userId} onValueChange={setUserId}>
                 <SelectTrigger id="ctrl-user">
-                  <SelectValue placeholder="Select a user..." />
+                  <SelectValue placeholder={t("agents.detail.controllers.selectUser")} />
                 </SelectTrigger>
                 <SelectContent>
                   {availableUsers.map((member) => (
@@ -287,13 +289,13 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
               checked={isPrimary}
               onCheckedChange={(v) => setIsPrimary(v === true)}
             />
-            <Label htmlFor="ctrl-primary">Primary Controller</Label>
+            <Label htmlFor="ctrl-primary">{t("agents.detail.controllers.primaryController")}</Label>
           </div>
 
           <div className="space-y-2">
-            <Label>Permissions</Label>
+            <Label>{t("agents.detail.controllers.permissions")}</Label>
             <div className="grid grid-cols-2 gap-2">
-              {PERMISSION_KEYS.map(({ key, label }) => (
+              {PERMISSION_KEYS.map(({ key, labelKey }) => (
                 <div key={key} className="flex items-center gap-2">
                   <Checkbox
                     id={`perm-${key}`}
@@ -303,7 +305,7 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
                     }
                   />
                   <Label htmlFor={`perm-${key}`} className="text-xs">
-                    {label}
+                    {t(labelKey)}
                   </Label>
                 </div>
               ))}
@@ -318,10 +320,10 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
               {createMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Create
+              {t("agents.detail.controllers.save")}
             </Button>
             <Button variant="ghost" onClick={resetForm}>
-              Cancel
+              {t("agents.detail.controllers.cancel")}
             </Button>
           </div>
         </div>

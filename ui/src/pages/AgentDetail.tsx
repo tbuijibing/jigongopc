@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { AnimatedAgentAvatar } from "@/components/AnimatedAgentAvatar";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, Link, useBeforeUnload } from "@/lib/router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -476,8 +477,13 @@ export function AgentDetail() {
             value={agent.icon}
             onChange={(icon) => updateIcon.mutate(icon)}
           >
-            <button className="shrink-0 flex items-center justify-center h-12 w-12 rounded-lg bg-accent hover:bg-accent/80 transition-colors">
-              <AgentIcon icon={agent.icon} className="h-6 w-6" />
+            <button className="shrink-0 transition-transform hover:scale-105">
+              <AnimatedAgentAvatar
+                icon={agent.icon}
+                status={agent.status}
+                size="md"
+                isRunning={agent.status === "running"}
+              />
             </button>
           </AgentIconPicker>
           <div className="min-w-0">
@@ -783,6 +789,7 @@ function SummaryRow({ label, children }: { label: string; children: React.ReactN
 }
 
 function LatestRunCard({ runs, agentId }: { runs: HeartbeatRun[]; agentId: string }) {
+  const { t } = useTranslation();
   if (runs.length === 0) return null;
 
   const sorted = [...runs].sort(
@@ -808,13 +815,13 @@ function LatestRunCard({ runs, agentId }: { runs: HeartbeatRun[]; agentId: strin
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
             </span>
           )}
-          {isLive ? "Live Run" : "Latest Run"}
+          {isLive ? t("agents.detail.overview.liveRun") : t("agents.detail.overview.latestRun")}
         </h3>
         <Link
           to={`/agents/${agentId}/runs/${run.id}`}
           className="shrink-0 text-xs text-muted-foreground hover:text-foreground transition-colors no-underline"
         >
-          View details &rarr;
+          {t("agents.detail.overview.viewDetails")}
         </Link>
       </div>
 
@@ -872,6 +879,7 @@ function AgentOverview({
   agentId: string;
   agentRouteId: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-8">
       {/* Latest Run */}
@@ -879,16 +887,16 @@ function AgentOverview({
 
       {/* Charts */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <ChartCard title="Run Activity" subtitle="Last 14 days">
+        <ChartCard title={t("agents.detail.overview.runActivity")} subtitle={t("agents.detail.overview.last14Days")}>
           <RunActivityChart runs={runs} />
         </ChartCard>
-        <ChartCard title="Issues by Priority" subtitle="Last 14 days">
+        <ChartCard title={t("agents.detail.overview.issuesByPriority")} subtitle={t("agents.detail.overview.last14Days")}>
           <PriorityChart issues={assignedIssues} />
         </ChartCard>
-        <ChartCard title="Issues by Status" subtitle="Last 14 days">
+        <ChartCard title={t("agents.detail.overview.issuesByStatus")} subtitle={t("agents.detail.overview.last14Days")}>
           <IssueStatusChart issues={assignedIssues} />
         </ChartCard>
-        <ChartCard title="Success Rate" subtitle="Last 14 days">
+        <ChartCard title={t("agents.detail.overview.successRate")} subtitle={t("agents.detail.overview.last14Days")}>
           <SuccessRateChart runs={runs} />
         </ChartCard>
       </div>
@@ -896,13 +904,13 @@ function AgentOverview({
       {/* Recent Issues */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Recent Issues</h3>
+          <h3 className="text-sm font-medium">{t("agents.detail.overview.recentIssues")}</h3>
           <Link to={`/issues?assignee=${agentId}`} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-            See All &rarr;
+            {t("agents.detail.overview.seeAll")} &rarr;
           </Link>
         </div>
         {assignedIssues.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No assigned issues.</p>
+          <p className="text-sm text-muted-foreground">{t("agents.detail.overview.noAssignedIssues")}</p>
         ) : (
           <div className="border border-border rounded-lg">
             {assignedIssues.slice(0, 10).map((issue) => (
@@ -916,7 +924,7 @@ function AgentOverview({
             ))}
             {assignedIssues.length > 10 && (
               <div className="px-3 py-2 text-xs text-muted-foreground text-center border-t border-border">
-                +{assignedIssues.length - 10} more issues
+                +{assignedIssues.length - 10} {t("agents.detail.overview.moreIssues")}
               </div>
             )}
           </div>
@@ -925,7 +933,7 @@ function AgentOverview({
 
       {/* Costs */}
       <div className="space-y-3">
-        <h3 className="text-sm font-medium">Costs</h3>
+        <h3 className="text-sm font-medium">{t("agents.detail.overview.costs")}</h3>
         <CostsSection runtimeState={runtimeState} runs={runs} />
       </div>
 
@@ -955,26 +963,27 @@ function ConfigSummary({
   reportsToAgent: Agent | null;
   directReports: Agent[];
 }) {
+  const { t } = useTranslation();
   const config = agent.adapterConfig as Record<string, unknown>;
   const promptText = typeof config?.promptTemplate === "string" ? config.promptTemplate : "";
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">Configuration</h3>
+        <h3 className="text-sm font-medium">{t("agents.detail.overview.configuration")}</h3>
         <Link
           to={`/agents/${agentRouteId}/configure`}
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors no-underline"
         >
           <Settings className="h-3 w-3" />
-          Manage &rarr;
+          {t("agents.detail.overview.manage")} &rarr;
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="border border-border rounded-lg p-4 space-y-3">
-          <h4 className="text-xs text-muted-foreground font-medium">Agent Details</h4>
+          <h4 className="text-xs text-muted-foreground font-medium">{t("agents.detail.overview.agentDetails")}</h4>
           <div className="space-y-2 text-sm">
-            <SummaryRow label="Adapter">
+            <SummaryRow label={t("agents.detail.overview.adapter")}>
               <span className="font-mono">{adapterLabels[agent.adapterType] ?? agent.adapterType}</span>
               {String(config?.model ?? "") !== "" && (
                 <span className="text-muted-foreground ml-1">
@@ -982,11 +991,11 @@ function ConfigSummary({
                 </span>
               )}
             </SummaryRow>
-            <SummaryRow label="Heartbeat">
+            <SummaryRow label={t("agents.detail.overview.heartbeat")}>
               {(agent.runtimeConfig as Record<string, unknown>)?.heartbeat
                 ? (() => {
                     const hb = (agent.runtimeConfig as Record<string, unknown>).heartbeat as Record<string, unknown>;
-                    if (!hb.enabled) return <span className="text-muted-foreground">Disabled</span>;
+                    if (!hb.enabled) return <span className="text-muted-foreground">{t("agents.detail.overview.disabled")}</span>;
                     const sec = Number(hb.intervalSec) || 300;
                     const maxConcurrentRuns = Math.max(1, Math.floor(Number(hb.maxConcurrentRuns) || 1));
                     const intervalLabel = sec >= 60 ? `${Math.round(sec / 60)} min` : `${sec}s`;
@@ -997,16 +1006,16 @@ function ConfigSummary({
                       </span>
                     );
                   })()
-                : <span className="text-muted-foreground">Not configured</span>
+                : <span className="text-muted-foreground">{t("agents.detail.overview.notConfigured")}</span>
               }
             </SummaryRow>
-            <SummaryRow label="Last heartbeat">
+            <SummaryRow label={t("agents.detail.overview.lastHeartbeat")}>
               {agent.lastHeartbeatAt
                 ? <span>{relativeTime(agent.lastHeartbeatAt)}</span>
                 : <span className="text-muted-foreground">Never</span>
               }
             </SummaryRow>
-            <SummaryRow label="Reports to">
+            <SummaryRow label={t("agents.detail.overview.reportsTo")}>
               {reportsToAgent ? (
                 <Link
                   to={`/agents/${agentRouteRef(reportsToAgent)}`}
@@ -1015,13 +1024,13 @@ function ConfigSummary({
                   <Identity name={reportsToAgent.name} size="sm" />
                 </Link>
               ) : (
-                <span className="text-muted-foreground">Nobody (top-level)</span>
+                <span className="text-muted-foreground">{t("agents.detail.overview.nobody")}</span>
               )}
             </SummaryRow>
           </div>
           {directReports.length > 0 && (
             <div className="pt-1">
-              <span className="text-xs text-muted-foreground">Direct reports</span>
+              <span className="text-xs text-muted-foreground">{t("agents.detail.overview.directReports")}</span>
               <div className="mt-1 space-y-1">
                 {directReports.map((r) => (
                   <Link
@@ -1045,7 +1054,7 @@ function ConfigSummary({
         </div>
         {promptText && (
           <div className="border border-border rounded-lg p-4 space-y-2">
-            <h4 className="text-xs text-muted-foreground font-medium">Prompt Template</h4>
+            <h4 className="text-xs text-muted-foreground font-medium">{t("agents.detail.overview.promptTemplate")}</h4>
             <pre className="text-xs text-muted-foreground line-clamp-[12] font-mono whitespace-pre-wrap">{promptText}</pre>
           </div>
         )}
@@ -1153,6 +1162,7 @@ function AgentConfigurePage({
   onSavingChange: (saving: boolean) => void;
   updatePermissions: { mutate: (canCreate: boolean) => void; isPending: boolean };
 }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [revisionsOpen, setRevisionsOpen] = useState(false);
 
@@ -1182,7 +1192,7 @@ function AgentConfigurePage({
         companyId={companyId}
       />
       <div>
-        <h3 className="text-sm font-medium mb-3">API Keys</h3>
+        <h3 className="text-sm font-medium mb-3">{t("agents.detail.configure.apiKeys")}</h3>
         <KeysTab agentId={agentId} companyId={companyId} />
       </div>
 
@@ -1196,13 +1206,13 @@ function AgentConfigurePage({
             ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
             : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
           }
-          Configuration Revisions
+          {t("agents.detail.configure.revisions")}
           <span className="text-xs font-normal text-muted-foreground">{configRevisions?.length ?? 0}</span>
         </button>
         {revisionsOpen && (
           <div className="mt-3">
             {(configRevisions ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">No configuration revisions yet.</p>
+              <p className="text-sm text-muted-foreground">{t("agents.detail.configure.noRevisions")}.</p>
             ) : (
               <div className="space-y-2">
                 {(configRevisions ?? []).slice(0, 10).map((revision) => (
@@ -1222,12 +1232,12 @@ function AgentConfigurePage({
                         onClick={() => rollbackConfig.mutate(revision.id)}
                         disabled={rollbackConfig.isPending}
                       >
-                        Restore
+                        {t("agents.detail.configure.restore")}
                       </Button>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Changed:{" "}
-                      {revision.changedKeys.length > 0 ? revision.changedKeys.join(", ") : "no tracked changes"}
+                      {t("agents.detail.configure.changed")}:{" "}
+                      {revision.changedKeys.length > 0 ? revision.changedKeys.join(", ") : t("agents.detail.configure.noTrackedChanges")}
                     </p>
                   </div>
                 ))}
@@ -1259,6 +1269,7 @@ function ConfigurationTab({
   onSavingChange: (saving: boolean) => void;
   updatePermissions: { mutate: (canCreate: boolean) => void; isPending: boolean };
 }) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: adapterModels } = useQuery({
@@ -1295,7 +1306,7 @@ function ConfigurationTab({
     <div className="space-y-6">
       {updateAgent.error && (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          <p className="font-medium">Failed to save agent configuration</p>
+          <p className="font-medium">{t("agents.detail.configure.errorSave")}</p>
           <p className="mt-1">{updateAgent.error instanceof Error ? updateAgent.error.message : 'Unknown error'}</p>
         </div>
       )}
@@ -1313,10 +1324,10 @@ function ConfigurationTab({
       />
 
       <div>
-        <h3 className="text-sm font-medium mb-3">Permissions</h3>
+        <h3 className="text-sm font-medium mb-3">{t("agents.detail.configure.permissions")}</h3>
         <div className="border border-border rounded-lg p-4">
           <div className="flex items-center justify-between text-sm">
-            <span>Can create new agents</span>
+            <span>{t("agents.detail.configure.canCreateAgents")}</span>
             <Button
               variant={agent.permissions?.canCreateAgents ? "default" : "outline"}
               size="sm"
@@ -1326,7 +1337,7 @@ function ConfigurationTab({
               }
               disabled={updatePermissions.isPending}
             >
-              {agent.permissions?.canCreateAgents ? "Enabled" : "Disabled"}
+              {agent.permissions?.canCreateAgents ? t("agents.detail.configure.enabled") : t("agents.detail.configure.disabled")}
             </Button>
           </div>
         </div>
@@ -1338,6 +1349,7 @@ function ConfigurationTab({
 /* ---- Runs Tab ---- */
 
 function RunListItem({ run, isSelected, agentId }: { run: HeartbeatRun; isSelected: boolean; agentId: string }) {
+  const { t } = useTranslation();
   const statusInfo = runStatusIcons[run.status] ?? { icon: Clock, color: "text-neutral-400" };
   const StatusIcon = statusInfo.icon;
   const metrics = runMetrics(run);
@@ -1378,7 +1390,7 @@ function RunListItem({ run, isSelected, agentId }: { run: HeartbeatRun; isSelect
       )}
       {(metrics.totalTokens > 0 || metrics.cost > 0) && (
         <div className="flex items-center gap-2 pl-5.5 text-[11px] text-muted-foreground">
-          {metrics.totalTokens > 0 && <span>{formatTokens(metrics.totalTokens)} tok</span>}
+          {metrics.totalTokens > 0 && <span>{formatTokens(metrics.totalTokens)} {t("agents.detail.runs.tok")}</span>}
           {metrics.cost > 0 && <span>${metrics.cost.toFixed(3)}</span>}
         </div>
       )}
@@ -1401,10 +1413,11 @@ function RunsTab({
   selectedRunId: string | null;
   adapterType: string;
 }) {
+  const { t } = useTranslation();
   const { isMobile } = useSidebar();
 
   if (runs.length === 0) {
-    return <p className="text-sm text-muted-foreground">No runs yet.</p>;
+    return <p className="text-sm text-muted-foreground">{t("agents.detail.runs.noRuns")}</p>;
   }
 
   // Sort by created descending

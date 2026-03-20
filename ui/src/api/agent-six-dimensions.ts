@@ -61,6 +61,12 @@ export interface AgentSkill {
   installedAt: string;
   name?: string;
   category?: string;
+  skillName?: string;
+  skillCategory?: string;
+  skillSlug?: string;
+  skillDescription?: string;
+  skillContent?: string;
+  skillVersion?: string;
 }
 
 export interface AgentMemory {
