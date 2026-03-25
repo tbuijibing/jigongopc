@@ -1,4 +1,4 @@
-import {
+import React, {
   forwardRef,
   useCallback,
   useEffect,
@@ -189,7 +189,7 @@ function mentionChipStyle(color: string | null): CSSProperties | undefined {
 
 /* ---- Component ---- */
 
-export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>(function MarkdownEditor({
+export const MarkdownEditor = React.memo(forwardRef<MarkdownEditorRef, MarkdownEditorProps>(function MarkdownEditor({
   value,
   onChange,
   placeholder,
@@ -630,4 +630,4 @@ export const MarkdownEditor = forwardRef<MarkdownEditorRef, MarkdownEditorProps>
       )}
     </div>
   );
-});
+}));

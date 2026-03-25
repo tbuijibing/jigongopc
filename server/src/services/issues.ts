@@ -321,6 +321,9 @@ export function issueService(db: Db) {
     if (assignee.status === "pending_approval") {
       throw conflict("Cannot assign work to pending approval agents");
     }
+    if (assignee.status === "paused") {
+      throw conflict("Cannot assign work to paused agents (budget limit reached)");
+    }
     if (assignee.status === "terminated") {
       throw conflict("Cannot assign work to terminated agents");
     }

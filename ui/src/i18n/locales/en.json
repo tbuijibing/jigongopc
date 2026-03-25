@@ -101,6 +101,7 @@
       "agentOptions": "Agent options",
       "labels": "Labels",
       "image": "Image",
+      "attachFiles": "Attach files",
       "uploading": "Uploading...",
       "startDate": "Start date",
       "dueDate": "Due date",

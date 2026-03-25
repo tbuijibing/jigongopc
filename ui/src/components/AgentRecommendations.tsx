@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import type { Agent } from "@Jigongai/shared";
 import { useAgentRecommendations } from "../hooks/useAgentRecommendations";
 import { AgentRecommendationCard } from "./AgentRecommendationCard";
@@ -20,7 +20,7 @@ export interface AgentRecommendationsProps {
   onSelectionChange: (agentIds: Set<string>) => void;
 }
 
-export function AgentRecommendations({
+export const AgentRecommendations = React.memo(function AgentRecommendations({
   companyId,
   title,
   description,
@@ -41,7 +41,7 @@ export function AgentRecommendations({
   // Limit to 10 agents
   const displayedAgents = useMemo(() => agents.slice(0, 10), [agents]);
 
-  // Auto-select agents on load and updates
+  // Auto-select agents on load (only once when component mounts or agents first load)
   useEffect(() => {
     if (displayedAgents.length === 0) return;
 
@@ -55,10 +55,11 @@ export function AgentRecommendations({
       }
     }
 
+    // Only update if selection actually changed (not just because agents list changed)
     if (changed) {
       onSelectionChange(newSelection);
     }
-  }, [displayedAgents, explicitlyDeselected]);
+  }, [displayedAgents.map(a => a.id).join(','), explicitlyDeselected, selectedAgentIds, onSelectionChange]);
 
   // Reset deselection tracking on unmount
   useEffect(() => {
@@ -184,4 +185,4 @@ export function AgentRecommendations({
       </CollapsibleContent>
     </Collapsible>
   );
-}
+});

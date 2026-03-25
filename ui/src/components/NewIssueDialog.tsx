@@ -48,7 +48,7 @@ import { AgentRecommendations } from "./AgentRecommendations";
 import { issueWatchersApi } from "../api/issue-watchers";
 
 const DRAFT_KEY = "Jigong:issue-draft";
-const DEBOUNCE_MS = 800;
+const DEBOUNCE_MS = 1200; // Increased debounce to reduce flickering
 
 /** Return black or white hex based on background luminance (WCAG perceptual weights). */
 function getContrastTextColor(hexColor: string): string {
@@ -179,6 +179,9 @@ export function NewIssueDialog() {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [pendingAttachments, setPendingAttachments] = useState<File[]>([]);
+  const [uploadingAttachments, setUploadingAttachments] = useState<Set<string>>(new Set());
+  const [attachmentErrors, setAttachmentErrors] = useState<Map<string, string>>(new Map());
   const [status, setStatus] = useState("todo");
   const [priority, setPriority] = useState("");
   const [issueType, setIssueType] = useState<IssueType>("task");
@@ -193,6 +196,7 @@ export function NewIssueDialog() {
   const [dialogCompanyId, setDialogCompanyId] = useState<string | null>(null);
   const [selectedWatcherIds, setSelectedWatcherIds] = useState<Set<string>>(new Set());
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const effectiveCompanyId = dialogCompanyId ?? selectedCompanyId;
   const dialogCompany = companies.find((c) => c.id === effectiveCompanyId) ?? selectedCompany;
@@ -270,6 +274,22 @@ export function NewIssueDialog() {
     mutationFn: ({ companyId, ...data }: { companyId: string } & Record<string, unknown>) =>
       issuesApi.create(companyId, data),
     onSuccess: async (result) => {
+      // Upload pending attachments after issue is created
+      if (pendingAttachments.length > 0 && effectiveCompanyId) {
+        const taskId = result.id;
+        setUploadingAttachments(new Set(pendingAttachments.map((f) => f.name)));
+        
+        const uploadPromises = pendingAttachments.map((file) =>
+          uploadAttachment.mutateAsync({ issueId: taskId, file }).catch((err) => {
+            console.error(`Failed to upload attachment ${file.name}:`, err);
+            setAttachmentErrors((prev) => new Map(prev).set(file.name, err.message || "Upload failed"));
+          })
+        );
+        
+        await Promise.allSettled(uploadPromises);
+        setUploadingAttachments(new Set());
+      }
+
       // Create watchers for selected agents
       if (selectedWatcherIds.size > 0 && effectiveCompanyId) {
         const taskId = result.id;
@@ -303,7 +323,14 @@ export function NewIssueDialog() {
     },
   });
 
-  // Debounced draft saving
+  const uploadAttachment = useMutation({
+    mutationFn: async ({ issueId, file }: { issueId: string; file: File }) => {
+      if (!effectiveCompanyId) throw new Error("No company selected");
+      return issuesApi.uploadAttachment(effectiveCompanyId, issueId, file);
+    },
+  });
+
+  // Debounced draft saving - optimized to reduce flickering
   const scheduleSave = useCallback(
     (draft: IssueDraft) => {
       if (draftTimer.current) clearTimeout(draftTimer.current);
@@ -314,9 +341,10 @@ export function NewIssueDialog() {
     [],
   );
 
-  // Save draft on meaningful changes
+  // Save draft on meaningful changes - only when title changes (not description keystrokes)
   useEffect(() => {
     if (!newIssueOpen) return;
+    // Only save draft when title changes, not on every description keystroke
     scheduleSave({
       title,
       description,
@@ -332,7 +360,6 @@ export function NewIssueDialog() {
     });
   }, [
     title,
-    description,
     status,
     priority,
     assigneeId,
@@ -434,6 +461,10 @@ export function NewIssueDialog() {
     setExpanded(false);
     setDialogCompanyId(null);
     setCompanyOpen(false);
+    setPendingAttachments([]);
+    setUploadingAttachments(new Set());
+    setAttachmentErrors(new Map());
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   function handleCompanyChange(companyId: string) {
@@ -453,7 +484,7 @@ export function NewIssueDialog() {
     closeNewIssue();
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!effectiveCompanyId || !title.trim()) return;
     const assigneeAdapterOverrides = buildAssigneeAdapterOverrides({
       adapterType: assigneeAdapterType,
@@ -495,6 +526,28 @@ export function NewIssueDialog() {
     } finally {
       if (attachInputRef.current) attachInputRef.current.value = "";
     }
+  }
+
+  function handleAddAttachments(evt: ChangeEvent<HTMLInputElement>) {
+    const files = evt.target.files;
+    if (!files || files.length === 0) return;
+    setPendingAttachments((prev) => [...prev, ...Array.from(files)]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function handleRemoveAttachment(fileName: string) {
+    setPendingAttachments((prev) => prev.filter((f) => f.name !== fileName));
+    setAttachmentErrors((prev) => {
+      const next = new Map(prev);
+      next.delete(fileName);
+      return next;
+    });
+  }
+
+  function formatFileSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
 
   const hasDraft = title.trim().length > 0 || description.trim().length > 0;
@@ -982,7 +1035,7 @@ export function NewIssueDialog() {
             {t("issues.newDialog.labels")}
           </button>
 
-          {/* Attach image chip */}
+          {/* Attach image chip (inline in description) */}
           <input
             ref={attachInputRef}
             type="file"
@@ -998,6 +1051,64 @@ export function NewIssueDialog() {
             <Paperclip className="h-3 w-3" />
             {uploadDescriptionImage.isPending ? t("issues.newDialog.uploading") : t("issues.newDialog.image")}
           </button>
+
+          {/* Attach files chip (as issue attachments) */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={handleAddAttachments}
+          />
+          <button
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent/50 transition-colors text-muted-foreground"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadAttachment.isPending}
+          >
+            <Paperclip className="h-3 w-3" />
+            {t("issues.newDialog.attachFiles")}
+          </button>
+
+          {/* Pending attachments list */}
+          {pendingAttachments.length > 0 && (
+            <div className="flex items-center gap-1 flex-wrap">
+              {pendingAttachments.map((file) => {
+                const isUploading = uploadingAttachments.has(file.name);
+                const error = attachmentErrors.get(file.name);
+                return (
+                  <span
+                    key={file.name}
+                    className={cn(
+                      "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs border",
+                      error ? "border-destructive/50 bg-destructive/10 text-destructive" : "border-border bg-muted/50",
+                    )}
+                  >
+                    <Paperclip className="h-2.5 w-2.5" />
+                    <span className="max-w-[120px] truncate">{file.name}</span>
+                    <span className="text-muted-foreground">({formatFileSize(file.size)})</span>
+                    {isUploading && <span className="text-xs text-primary">...</span>}
+                    {!isUploading && !error && (
+                      <button
+                        className="hover:text-destructive transition-colors"
+                        onClick={() => handleRemoveAttachment(file.name)}
+                      >
+                        ×
+                      </button>
+                    )}
+                    {error && (
+                      <button
+                        className="hover:text-foreground transition-colors"
+                        onClick={() => handleRemoveAttachment(file.name)}
+                        title={error}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </span>
+                );
+              })}
+            </div>
+          )}
 
           {/* More (dates) */}
           <Popover open={moreOpen} onOpenChange={setMoreOpen}>

@@ -2,6 +2,7 @@ import { and, desc, eq, gte, isNotNull, lte, sql } from "drizzle-orm";
 import type { Db } from "@jigongai/db";
 import { activityLog, agents, companies, costEvents, heartbeatRuns, issues, projects } from "@jigongai/db";
 import { notFound, unprocessable } from "../errors.js";
+import { activityService } from "./activity.js";
 
 export interface CostDateRange {
   from?: Date;
@@ -61,6 +62,24 @@ export function costService(db: Db) {
           .update(agents)
           .set({ status: "paused", updatedAt: new Date() })
           .where(eq(agents.id, updatedAgent.id));
+
+        // Emit high-priority activity event for budget hard-stop
+        await activityService(db).create({
+          companyId,
+          actorType: "system",
+          actorId: "budget-enforcement",
+          action: "agent_paused_budget_limit",
+          entityType: "agent",
+          entityId: event.agentId,
+          agentId: event.agentId,
+          details: {
+            reason: "budget_limit_reached",
+            spentCents: updatedAgent.spentMonthlyCents,
+            budgetCents: updatedAgent.budgetMonthlyCents,
+            utilizationPercent: Math.round((updatedAgent.spentMonthlyCents / updatedAgent.budgetMonthlyCents) * 100),
+            priority: "high",
+          },
+        });
       }
 
       return event;

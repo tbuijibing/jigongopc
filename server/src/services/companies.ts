@@ -1,5 +1,6 @@
-import { eq, count } from "drizzle-orm";
+import { and, eq, count } from "drizzle-orm";
 import type { Db } from "@jigongai/db";
+import { conflict } from "../errors.js";
 import {
   companies,
   agents,
@@ -89,13 +90,43 @@ export function companyService(db: Db) {
         .returning()
         .then((rows) => rows[0] ?? null),
 
-    archive: (id: string) =>
-      db
-        .update(companies)
-        .set({ status: "archived", updatedAt: new Date() })
-        .where(eq(companies.id, id))
-        .returning()
-        .then((rows) => rows[0] ?? null),
+    archive: async (id: string) => {
+      return db.transaction(async (tx) => {
+        // Check for active agents (in_progress status)
+        const activeAgents = await tx
+          .select({ id: agents.id, name: agents.name })
+          .from(agents)
+          .where(and(eq(agents.companyId, id), eq(agents.status, "in_progress")))
+          .then((rows) => rows);
+
+        if (activeAgents.length > 0) {
+          // Rollback transaction by throwing 409 conflict error
+          const agentNames = activeAgents.map((a) => a.name).join(", ");
+          throw conflict(`Cannot archive company with active agents. Terminate these agents first: ${agentNames}`);
+        }
+
+        // Revoke all API keys for agents in this company
+        await tx
+          .update(agentApiKeys)
+          .set({ revokedAt: new Date() })
+          .where(eq(agentApiKeys.companyId, id));
+
+        // Stop all non-terminated agents (set status to terminated)
+        await tx
+          .update(agents)
+          .set({ status: "terminated", updatedAt: new Date() })
+          .where(and(eq(agents.companyId, id), eq(agents.status, "idle")));
+
+        // Set company status to archived
+        const rows = await tx
+          .update(companies)
+          .set({ status: "archived", updatedAt: new Date() })
+          .where(eq(companies.id, id))
+          .returning();
+
+        return rows[0] ?? null;
+      });
+    },
 
     remove: (id: string) =>
       db.transaction(async (tx) => {
