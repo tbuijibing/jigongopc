@@ -1074,7 +1074,7 @@ export function buildInviteOnboardingTextDocument(
           url: "ws://127.0.0.1:18789",
           jigongApiUrl: "http://host.docker.internal:3100",
           headers: { "x-openclaw-token": token },
-          waitTimeoutMs: 120000,
+          waitTimeoutMs: 600000,
           sessionKeyStrategy: "issue",
           role: "operator",
           scopes: ["operator.admin"]
@@ -1107,7 +1107,7 @@ export function buildInviteOnboardingTextDocument(
         "url": "wss://your-openclaw-gateway.example",
         "jigongApiUrl": "https://jigong-hostname-your-agent-can-reach:3100",
         "headers": { "x-openclaw-token": "replace-me" },
-        "waitTimeoutMs": 120000,
+        "waitTimeoutMs": 600000,
         "sessionKeyStrategy": "issue",
         "role": "operator",
         "scopes": ["operator.admin"]

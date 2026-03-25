@@ -40,7 +40,7 @@ Recommended fields:
 ```json
 {
   "JigongApiUrl": "http://host.docker.internal:3100",
-  "waitTimeoutMs": 120000,
+  "waitTimeoutMs": 600000,
   "sessionKeyStrategy": "issue",
   "role": "operator",
   "scopes": ["operator.admin"]

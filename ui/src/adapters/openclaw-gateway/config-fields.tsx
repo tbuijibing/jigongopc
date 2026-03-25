@@ -189,7 +189,7 @@ export function OpenClawGatewayConfigFields({
 
           <Field label="Wait timeout (ms)">
             <DraftInput
-              value={eff("adapterConfig", "waitTimeoutMs", String(config.waitTimeoutMs ?? "120000"))}
+              value={eff("adapterConfig", "waitTimeoutMs", String(config.waitTimeoutMs ?? "600000"))}
               onCommit={(v) => {
                 const parsed = Number.parseInt(v.trim(), 10);
                 mark(
@@ -200,7 +200,7 @@ export function OpenClawGatewayConfigFields({
               }}
               immediate
               className={inputClass}
-              placeholder="120000"
+              placeholder="600000"
             />
           </Field>
 

@@ -101,8 +101,8 @@ const ADAPTER_DEFAULT_RULES_BY_TYPE: Record<string, Array<{ path: string[]; valu
     { path: ["maxTurnsPerRun"], value: 80 },
   ],
   openclaw_gateway: [
-    { path: ["timeoutSec"], value: 120 },
-    { path: ["waitTimeoutMs"], value: 120000 },
+    { path: ["timeoutSec"], value: 600 },
+    { path: ["waitTimeoutMs"], value: 600000 },
     { path: ["sessionKeyStrategy"], value: "fixed" },
     { path: ["sessionKey"], value: "jigong" },
     { path: ["role"], value: "operator" },

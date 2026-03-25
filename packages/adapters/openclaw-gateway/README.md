@@ -57,8 +57,8 @@ The agent request is built as:
 
 ## Timeouts
 
-- `timeoutSec` controls adapter-level request budget
-- `waitTimeoutMs` controls `agent.wait.timeoutMs`
+- `timeoutSec` controls adapter-level request budget (default: 600 seconds)
+- `waitTimeoutMs` controls `agent.wait.timeoutMs` (default: 600000ms)
 
 If `agent.wait` returns `timeout`, adapter returns `openclaw_gateway_wait_timeout`.
 
