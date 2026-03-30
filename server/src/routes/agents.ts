@@ -1615,7 +1615,7 @@ export function agentRoutes(db: Db) {
     await assertCanUpdateAgent(req, agent);
 
     const body = req.body;
-    if (!body.systemPrompt || typeof body.systemPrompt !== "string") {
+    if (body.systemPrompt === undefined || typeof body.systemPrompt !== "string") {
       res.status(400).json({ error: "systemPrompt is required and must be a string" });
       return;
     }

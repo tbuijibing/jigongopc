@@ -15,6 +15,7 @@ import {
   Repeat,
   Puzzle,
   Library,
+  Database,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarSection } from "./SidebarSection";
@@ -112,6 +113,7 @@ export function Sidebar() {
           <SidebarNavItem to="/company-skills" label={t("nav.companySkills")} icon={Library} />
           <SidebarNavItem to="/routines" label={t("nav.routines")} icon={Repeat} />
           <SidebarNavItem to="/plugins" label={t("nav.plugins")} icon={Puzzle} />
+          <SidebarNavItem to="/portability" label={t("nav.portability")} icon={Database} />
           <SidebarNavItem to="/costs" label={t("nav.costs")} icon={DollarSign} />
           <SidebarNavItem to="/activity" label={t("nav.activity")} icon={History} />
           <SidebarNavItem to="/collaboration" label={t("nav.collaboration")} icon={Globe} />

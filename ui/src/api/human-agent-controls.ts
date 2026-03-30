@@ -16,6 +16,12 @@ export interface HumanAgentControl {
     canInstallSkills?: boolean;
   };
   createdAt: string;
+  user?: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image?: string | null;
+  } | null;
 }
 
 export interface CreateControlInput {

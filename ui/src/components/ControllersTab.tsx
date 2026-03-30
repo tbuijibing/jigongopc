@@ -195,7 +195,9 @@ export function ControllersTab({ agentId, companyId }: ControllersTabProps) {
                 <div className="flex items-center gap-2 min-w-0">
                   <Shield className="h-4 w-4 text-muted-foreground shrink-0" />
                   <span className="text-sm font-medium truncate">
-                    {ctrl.userId === "local-board" ? "Board" : ctrl.userId.slice(0, 12)}
+                    {ctrl.userId === "local-board"
+                      ? "Board"
+                      : ctrl.user?.name || ctrl.user?.email || ctrl.userId.slice(0, 12)}
                   </span>
                   {ctrl.isPrimary && (
                     <Badge variant="default" className="text-[10px]">{t("agents.detail.controllers.primary")}</Badge>

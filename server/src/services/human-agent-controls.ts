@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import type { Db } from "@jigongai/db";
-import { agents, companyMemberships, humanAgentControls } from "@jigongai/db";
+import { agents, authUsers, companyMemberships, humanAgentControls } from "@jigongai/db";
 import type { HumanAgentPermissions } from "@jigongai/shared";
 import { notFound, unprocessable } from "../errors.js";
 
@@ -134,15 +134,25 @@ export function humanAgentControlService(db: Db) {
     },
 
     getControllers: async (companyId: string, agentId: string) => {
-      return db
-        .select()
+      const controls = await db
+        .select({
+          id: humanAgentControls.id,
+          userId: humanAgentControls.userId,
+          agentId: humanAgentControls.agentId,
+          isPrimary: humanAgentControls.isPrimary,
+          permissions: humanAgentControls.permissions,
+          createdAt: humanAgentControls.createdAt,
+          user: authUsers,
+        })
         .from(humanAgentControls)
+        .leftJoin(authUsers, eq(humanAgentControls.userId, authUsers.id))
         .where(
           and(
             eq(humanAgentControls.companyId, companyId),
             eq(humanAgentControls.agentId, agentId),
           ),
         );
+      return controls;
     },
 
     findPrimaryController: async (agentId: string) => {

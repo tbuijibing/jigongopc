@@ -97,6 +97,11 @@ export function accessService(db: Db) {
         displayName: authUsers.name,
         email: authUsers.email,
         image: authUsers.image,
+        user: {
+          id: authUsers.id,
+          name: authUsers.name,
+          email: authUsers.email,
+        },
       })
       .from(companyMemberships)
       .leftJoin(
