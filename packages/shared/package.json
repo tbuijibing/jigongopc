@@ -4,7 +4,10 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./*": "./src/*.ts"
+    "./types": "./src/types/index.ts",
+    "./validators": "./src/validators/index.ts",
+    "./constants": "./src/constants.ts",
+    "./api": "./src/api.ts"
   },
   "publishConfig": {
     "access": "public",

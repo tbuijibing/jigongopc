@@ -1,4 +1,82 @@
 {
+  "companySkills": {
+    "title": "公司技能库",
+    "description": "可复用的代理配置",
+    "create": "创建技能",
+    "edit": "编辑技能",
+    "delete": "删除技能",
+    "deleteConfirm": "确定要删除技能\"{name}\"吗？此操作不可撤销。",
+    "search": "搜索技能...",
+    "empty": "暂无技能 - 点击'创建技能'添加第一个技能",
+    "notFound": "未找到匹配的技能 - 尝试调整搜索条件",
+    "sourceType": "来源类型",
+    "trustLevel": "信任级别",
+    "status": "状态",
+    "compatibility": "兼容性",
+    "install": "安装",
+    "update": "更新",
+    "detail": "详情"
+  },
+  "routines": {
+    "title": "例行任务引擎",
+    "description": "自动化循环任务管理",
+    "create": "创建任务",
+    "edit": "编辑任务",
+    "delete": "删除任务",
+    "deleteConfirm": "确定要删除例行任务\"{name}\"吗？此操作不可撤销。",
+    "search": "搜索任务...",
+    "empty": "暂无例行任务 - 点击'创建任务'添加第一个自动化任务",
+    "notFound": "未找到匹配的任务 - 尝试调整搜索条件",
+    "trigger": "触发器",
+    "concurrencyPolicy": "并发策略",
+    "catchUpPolicy": "追赶策略",
+    "lastTriggered": "最后触发",
+    "run": "执行",
+    "detail": "详情",
+    "status": {
+      "active": "活跃",
+      "paused": "暂停",
+      "completed": "已完成",
+      "archived": "已归档"
+    },
+    "concurrency": {
+      "coalesce_if_active": "合并",
+      "allow_multiple": "多实例",
+      "skip_if_active": "跳过"
+    },
+    "catchUp": {
+      "skip_missed": "跳过",
+      "run_all_missed": "全部执行",
+      "run_latest_only": "仅最新"
+    },
+    "triggerType": {
+      "cron": "定时",
+      "webhook": "Webhook",
+      "event": "事件"
+    }
+  },
+  "plugins": {
+    "title": "插件系统",
+    "description": "可扩展的插件管理",
+    "install": "安装插件",
+    "uninstall": "卸载插件",
+    "delete": "删除插件",
+    "deleteConfirm": "确定要删除插件\"{name}\"吗？此操作不可撤销。",
+    "search": "搜索插件...",
+    "empty": "暂无插件 - 点击'安装插件'添加第一个插件",
+    "notFound": "未找到匹配的插件 - 尝试调整搜索条件",
+    "version": "版本",
+    "author": "作者",
+    "status": {
+      "active": "活跃",
+      "inactive": "未激活",
+      "error": "错误"
+    },
+    "detail": "详情",
+    "configure": "配置",
+    "activate": "激活",
+    "deactivate": "停用"
+  },
   "common": {
     "save": "保存",
     "cancel": "取消",
@@ -22,6 +100,9 @@
     "agents": "代理",
     "projects": "项目",
     "org": "组织",
+    "companySkills": "公司技能库",
+    "routines": "例行任务",
+    "plugins": "插件",
     "costs": "成本",
     "activity": "活动",
     "collaboration": "协作",
@@ -920,6 +1001,7 @@
     "posting": "发布中...",
     "comment": "评论",
     "copyAsMarkdown": "复制为 Markdown",
+    "deleteComment": "删除评论",
     "run": "运行",
     "runId": "运行 {{id}}",
     "you": "你",

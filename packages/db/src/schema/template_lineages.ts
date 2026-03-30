@@ -21,6 +21,9 @@ export const templateLineages = pgTable("template_lineages", {
     .unique()
     .references(() => companyTemplates.id, { onDelete: "cascade" }),
 
+  // Version info
+  version: text("version").notNull(),
+
   // Ancestry info
   rootTemplateId: uuid("root_template_id")
     .notNull()
@@ -37,6 +40,12 @@ export const templateLineages = pgTable("template_lineages", {
     forkedAt?: string;
     contribution?: string;
   }>(),
+
+  // Creator info
+  createdBy: text("created_by"),
+
+  // Change notes
+  changeNotes: text("change_notes"),
 
   // Statistics
   forkCount: integer("fork_count").notNull().default(0),

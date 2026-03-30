@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import type { Db } from "@jigongai/db";
 import { approvalComments, approvals } from "@jigongai/db";
 import { notFound, unprocessable } from "../errors.js";
@@ -200,7 +200,7 @@ export function approvalService(db: Db) {
             eq(approvalComments.companyId, existing.companyId),
           ),
         )
-        .orderBy(asc(approvalComments.createdAt));
+        .orderBy(desc(approvalComments.createdAt));
     },
 
     addComment: async (

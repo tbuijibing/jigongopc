@@ -133,3 +133,34 @@ export {
   type UpdateMemberPermissions,
   type UpdateUserCompanyAccess,
 } from "./access.js";
+
+// Company Skills
+export {
+  companySkillCreateSchema,
+  companySkillUpdateSchema,
+  companySkillFileUpdateSchema,
+  companySkillImportSchema,
+  companySkillProjectScanRequestSchema,
+} from "./company-skills.js";
+
+// Routines
+export {
+  createRoutineSchema,
+  updateRoutineSchema,
+  createRoutineTriggerSchema,
+  updateRoutineTriggerSchema,
+  rotateRoutineTriggerSecretSchema,
+  runRoutineSchema,
+} from "./routines.js";
+
+// Plugins
+export {
+  installPluginSchema,
+  updatePluginConfigSchema,
+  updatePluginStateSchema,
+  createPluginEntitySchema,
+  updatePluginEntitySchema,
+  createPluginJobSchema,
+  updatePluginJobSchema,
+  deliverPluginWebhookSchema,
+} from "./plugins.js";

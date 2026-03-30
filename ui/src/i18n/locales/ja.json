@@ -1,4 +1,82 @@
 {
+  "companySkills": {
+    "title": "会社スキル",
+    "description": "再利用可能なエージェント設定",
+    "create": "スキルを作成",
+    "edit": "スキルを編集",
+    "delete": "スキルを削除",
+    "deleteConfirm": "スキル\"{name}\"を削除してもよろしいですか？この操作は元に戻せません。",
+    "search": "スキルを検索...",
+    "empty": "スキルがありません - 'スキルを作成'をクリックして最初のスキルを追加してください",
+    "notFound": "一致するスキルが見つかりません - 検索条件を変更してください",
+    "sourceType": "ソースタイプ",
+    "trustLevel": "トラストレベル",
+    "status": "ステータス",
+    "compatibility": "互換性",
+    "install": "インストール",
+    "update": "更新",
+    "detail": "詳細"
+  },
+  "routines": {
+    "title": "ルーチンエンジン",
+    "description": "自動化された繰り返しタスク管理",
+    "create": "タスクを作成",
+    "edit": "タスクを編集",
+    "delete": "タスクを削除",
+    "deleteConfirm": "ルーチン\"{name}\"を削除してもよろしいですか？この操作は元に戻せません。",
+    "search": "タスクを検索...",
+    "empty": "ルーチンがありません - 'タスクを作成'をクリックして最初の自動化を追加してください",
+    "notFound": "一致するタスクが見つかりません - 検索条件を変更してください",
+    "trigger": "トリガー",
+    "concurrencyPolicy": "同時実行ポリシー",
+    "catchUpPolicy": "キャッチアップポリシー",
+    "lastTriggered": "最終トリガー",
+    "run": "実行",
+    "detail": "詳細",
+    "status": {
+      "active": "アクティブ",
+      "paused": "一時停止",
+      "completed": "完了",
+      "archived": "アーカイブ"
+    },
+    "concurrency": {
+      "coalesce_if_active": "統合",
+      "allow_multiple": "複数",
+      "skip_if_active": "スキップ"
+    },
+    "catchUp": {
+      "skip_missed": "スキップ",
+      "run_all_missed": "すべて実行",
+      "run_latest_only": "最新のみ"
+    },
+    "triggerType": {
+      "cron": "クロン",
+      "webhook": "Webhook",
+      "event": "イベント"
+    }
+  },
+  "plugins": {
+    "title": "プラグインシステム",
+    "description": "拡張可能なプラグイン管理",
+    "install": "プラグインをインストール",
+    "uninstall": "プラグインをアンインストール",
+    "delete": "プラグインを削除",
+    "deleteConfirm": "プラグイン\"{name}\"を削除してもよろしいですか？この操作は元に戻せません。",
+    "search": "プラグインを検索...",
+    "empty": "プラグインがありません - 'プラグインをインストール'をクリックして最初のプラグインを追加してください",
+    "notFound": "一致するプラグインが見つかりません - 検索条件を変更してください",
+    "version": "バージョン",
+    "author": "作者",
+    "status": {
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "error": "エラー"
+    },
+    "detail": "詳細",
+    "configure": "設定",
+    "activate": "有効化",
+    "deactivate": "無効化"
+  },
   "common": {
     "save": "保存",
     "cancel": "キャンセル",
@@ -22,6 +100,9 @@
     "agents": "エージェント",
     "projects": "プロジェクト",
     "org": "組織",
+    "companySkills": "会社スキル",
+    "routines": "ルーチン",
+    "plugins": "プラグイン",
     "costs": "コスト",
     "activity": "アクティビティ",
     "collaboration": "コラボレーション",
@@ -921,6 +1002,7 @@
     "posting": "投稿中...",
     "comment": "コメント",
     "copyAsMarkdown": "Markdown としてコピー",
+    "deleteComment": "コメントを削除",
     "run": "実行",
     "runId": "実行 {{id}}",
     "you": "あなた",

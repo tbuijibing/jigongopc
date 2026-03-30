@@ -36,3 +36,8 @@ export { createTemplateEncryptionService } from "./template-encryption.js";
 export { paymentService } from "./payment.js";
 export { creatorIncentiveService } from "./creator-incentive.js";
 export { creatorTierService } from "./creator-tier.js";
+
+// New Features from Paperclip
+export { companySkillService } from "./company-skills.js";
+export { routineService } from "./routines.js";
+export { pluginService } from "./plugins.js";

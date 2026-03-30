@@ -141,6 +141,22 @@ export type {
   AgentEnvConfig,
   CompanySecret,
   SecretProviderDescriptor,
+  CompanySkill,
+  CompanySkillFile,
+  CompanySkillUpdateStatus,
+  Routine,
+  RoutineTrigger,
+  RoutineRun,
+  RoutineDetail,
+  Plugin,
+  PluginConfig,
+  PluginState,
+  PluginEntity,
+  PluginJob,
+  PluginJobRun,
+  PluginWebhookDelivery,
+  PluginLog,
+  PluginManifest,
 } from "./types/index.js";
 
 export {

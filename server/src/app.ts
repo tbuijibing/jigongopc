@@ -29,6 +29,10 @@ import { agentSelfRoutes } from "./routes/agent-self.js";
 import { userRoutes } from "./routes/users.js";
 import { marketplaceRoutes } from "./routes/marketplace.js";
 import { graphqlRoutes } from "./routes/graphql.js";
+// New Features from Paperclip
+import { companySkillRoutes } from "./routes/company-skills.js";
+import { routineRoutes } from "./routes/routines.js";
+import { pluginRoutes } from "./routes/plugins.js";
 import type { BetterAuthSessionResult } from "./auth/better-auth.js";
 import { loadModules } from "./modules/loader.js";
 
@@ -123,6 +127,10 @@ export async function createApp(
   api.use(agentSelfRoutes(db));
   api.use("/users", userRoutes(db));
   api.use(graphqlRoutes(db));
+  // New Features from Paperclip
+  api.use(companySkillRoutes(db));
+  api.use(routineRoutes(db));
+  api.use(pluginRoutes(db));
   api.use(
     accessRoutes(db, {
       deploymentMode: opts.deploymentMode,

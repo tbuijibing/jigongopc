@@ -197,6 +197,13 @@
       "when": 1773851200000,
       "tag": "0027_timezone_support",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1774886035224,
+      "tag": "0028_futuristic_loki",
+      "breakpoints": true
     }
   ]
 }

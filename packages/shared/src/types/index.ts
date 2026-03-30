@@ -48,6 +48,28 @@ export type { DashboardSummary } from "./dashboard.js";
 export type { ActivityEvent } from "./activity.js";
 export type { SidebarBadges } from "./sidebar-badges.js";
 export type {
+  CompanySkill,
+  CompanySkillFile,
+  CompanySkillUpdateStatus,
+} from "./company-skills.js";
+export type {
+  Routine,
+  RoutineTrigger,
+  RoutineRun,
+  RoutineDetail,
+} from "./routines.js";
+export type {
+  Plugin,
+  PluginConfig,
+  PluginState,
+  PluginEntity,
+  PluginJob,
+  PluginJobRun,
+  PluginWebhookDelivery,
+  PluginLog,
+  PluginManifest,
+} from "./plugins.js";
+export type {
   CompanyMembership,
   CompanyMemberWithUser,
   PrincipalPermissionGrant,

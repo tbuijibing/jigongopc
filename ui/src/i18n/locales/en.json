@@ -1,4 +1,82 @@
 {
+  "companySkills": {
+    "title": "Company Skills",
+    "description": "Reusable agent configurations",
+    "create": "Create Skill",
+    "edit": "Edit Skill",
+    "delete": "Delete Skill",
+    "deleteConfirm": "Are you sure you want to delete skill \"{name}\"? This action cannot be undone.",
+    "search": "Search skills...",
+    "empty": "No skills yet - Click 'Create Skill' to add your first skill",
+    "notFound": "No matching skills found - Try adjusting your search",
+    "sourceType": "Source Type",
+    "trustLevel": "Trust Level",
+    "status": "Status",
+    "compatibility": "Compatibility",
+    "install": "Install",
+    "update": "Update",
+    "detail": "Detail"
+  },
+  "routines": {
+    "title": "Routines Engine",
+    "description": "Automated recurring task management",
+    "create": "Create Task",
+    "edit": "Edit Task",
+    "delete": "Delete Task",
+    "deleteConfirm": "Are you sure you want to delete routine \"{name}\"? This action cannot be undone.",
+    "search": "Search tasks...",
+    "empty": "No routines yet - Click 'Create Task' to add your first automation",
+    "notFound": "No matching tasks found - Try adjusting your search",
+    "trigger": "Trigger",
+    "concurrencyPolicy": "Concurrency Policy",
+    "catchUpPolicy": "Catch-up Policy",
+    "lastTriggered": "Last Triggered",
+    "run": "Run",
+    "detail": "Detail",
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "concurrency": {
+      "coalesce_if_active": "Coalesce",
+      "allow_multiple": "Multiple",
+      "skip_if_active": "Skip"
+    },
+    "catchUp": {
+      "skip_missed": "Skip",
+      "run_all_missed": "Run All",
+      "run_latest_only": "Latest Only"
+    },
+    "triggerType": {
+      "cron": "Cron",
+      "webhook": "Webhook",
+      "event": "Event"
+    }
+  },
+  "plugins": {
+    "title": "Plugin System",
+    "description": "Extensible plugin management",
+    "install": "Install Plugin",
+    "uninstall": "Uninstall Plugin",
+    "delete": "Delete Plugin",
+    "deleteConfirm": "Are you sure you want to delete plugin \"{name}\"? This action cannot be undone.",
+    "search": "Search plugins...",
+    "empty": "No plugins yet - Click 'Install Plugin' to add your first plugin",
+    "notFound": "No matching plugins found - Try adjusting your search",
+    "version": "Version",
+    "author": "Author",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "error": "Error"
+    },
+    "detail": "Detail",
+    "configure": "Configure",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -22,6 +100,9 @@
     "agents": "Agents",
     "projects": "Projects",
     "org": "Org",
+    "companySkills": "Company Skills",
+    "routines": "Routines",
+    "plugins": "Plugins",
     "costs": "Costs",
     "activity": "Activity",
     "collaboration": "Collaboration",
@@ -896,6 +977,7 @@
     "posting": "Posting...",
     "comment": "Comment",
     "copyAsMarkdown": "Copy as markdown",
+    "deleteComment": "Delete comment",
     "run": "Run",
     "runId": "run {{id}}",
     "you": "You",

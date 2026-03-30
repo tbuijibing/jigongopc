@@ -46,3 +46,6 @@ tmp/
 .claude/settings.local.json
 .Jigong-local/Jigong-db.dump
 doc/
+
+# Paperclip reference copy
+paperclip-master/

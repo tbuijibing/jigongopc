@@ -840,6 +840,41 @@ export function issueRoutes(db: Db, storage: StorageService) {
     res.json(comment);
   });
 
+  router.delete("/issues/:id/comments/:commentId", async (req, res) => {
+    const id = req.params.id as string;
+    const commentId = req.params.commentId as string;
+    const issue = await svc.getById(id);
+    if (!issue) {
+      res.status(404).json({ error: "Issue not found" });
+      return;
+    }
+    assertCompanyAccess(req, issue.companyId);
+    const comment = await svc.getComment(commentId);
+    if (!comment || comment.issueId !== id) {
+      res.status(404).json({ error: "Comment not found" });
+      return;
+    }
+
+    const actorInfo = getActorInfo(req);
+    const actor = {
+      agentId: actorInfo.agentId ?? null,
+      userId: actorInfo.actorType === "user" ? actorInfo.actorId : null,
+    };
+    try {
+      await svc.deleteComment(commentId, actor);
+      res.json({ ok: true });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      if (message === "Comment not found") {
+        res.status(404).json({ error: message });
+      } else if (message === "Only the comment author can delete the comment") {
+        res.status(403).json({ error: message });
+      } else {
+        res.status(500).json({ error: message });
+      }
+    }
+  });
+
   router.post("/issues/:id/comments", validate(addIssueCommentSchema), async (req, res) => {
     const id = req.params.id as string;
     const issue = await svc.getById(id);

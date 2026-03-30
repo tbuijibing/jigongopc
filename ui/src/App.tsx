@@ -35,6 +35,9 @@ import { CreatorDashboard } from "./pages/CreatorDashboard";
 import { AuthPage } from "./pages/Auth";
 import { BoardClaimPage } from "./pages/BoardClaim";
 import { InviteLandingPage } from "./pages/InviteLanding";
+import { CompanySkills } from "./pages/CompanySkills";
+import { Routines } from "./pages/Routines";
+import { Plugins } from "./pages/Plugins";
 import { queryKeys } from "./lib/queryKeys";
 import { useCompany } from "./context/CompanyContext";
 import { useDialog } from "./context/DialogContext";
@@ -139,6 +142,9 @@ function boardRoutes() {
       <Route path="inbox/new" element={<Inbox />} />
       <Route path="inbox/all" element={<Inbox />} />
       <Route path="skills" element={<SkillStore />} />
+      <Route path="company-skills" element={<CompanySkills />} />
+      <Route path="routines" element={<Routines />} />
+      <Route path="plugins" element={<Plugins />} />
       <Route path="profile" element={<UserProfile />} />
       <Route path="templates" element={<TemplateStore />} />
       <Route path="templates/:templateId" element={<TemplateDetail />} />

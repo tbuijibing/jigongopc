@@ -1134,6 +1134,31 @@ export function issueService(db: Db) {
         .where(eq(issueComments.id, commentId))
         .then((rows) => rows[0] ?? null),
 
+    deleteComment: async (
+      commentId: string,
+      actor: { agentId: string | null; userId?: string | null },
+    ) => {
+      const comment = await db
+        .select()
+        .from(issueComments)
+        .where(eq(issueComments.id, commentId))
+        .then((rows) => rows[0] ?? null);
+
+      if (!comment) throw notFound("Comment not found");
+
+      // Check if the actor is the author of the comment
+      const isAuthor =
+        (actor.agentId && comment.authorAgentId === actor.agentId) ||
+        (actor.userId && comment.authorUserId === actor.userId);
+
+      if (!isAuthor) {
+        throw new Error("Only the comment author can delete the comment");
+      }
+
+      await db.delete(issueComments).where(eq(issueComments.id, commentId));
+      return { ok: true };
+    },
+
     addComment: async (issueId: string, body: string, actor: { agentId?: string; userId?: string }) => {
       const issue = await db
         .select({ companyId: issues.companyId })

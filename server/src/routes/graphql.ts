@@ -11,11 +11,17 @@ import { expressMiddleware } from "@apollo/server/express4";
 export function graphqlRoutes(db: Db): Router {
   const router = Router();
 
-  // Create Apollo Server instance
-  const server = createApolloServer(db);
+  // Create Apollo Server instance (lazy start to avoid uuid landing page issue)
+  let server: ReturnType<typeof createApolloServer> | null = null;
+  let serverStarted: Promise<void> | null = null;
 
-  // Start the server
-  const serverStarted = server.start();
+  const ensureServerStarted = () => {
+    if (!server) {
+      server = createApolloServer(db);
+      serverStarted = server.start();
+    }
+    return serverStarted;
+  };
 
   // GraphQL endpoint with authentication context
   router.post(
@@ -23,7 +29,11 @@ export function graphqlRoutes(db: Db): Router {
     json({ limit: "10mb" }),
     async (req: Request, res: Response, next) => {
       // Wait for server to start
-      await serverStarted;
+      await ensureServerStarted();
+
+      if (!server) {
+        return res.status(500).json({ error: "Server not initialized" });
+      }
 
       // Build GraphQL context from request
       const context: GraphQLContext = {
@@ -44,7 +54,11 @@ export function graphqlRoutes(db: Db): Router {
   router.get(
     "/graphql",
     async (req: Request, res: Response, next) => {
-      await serverStarted;
+      await ensureServerStarted();
+
+      if (!server) {
+        return res.status(500).json({ error: "Server not initialized" });
+      }
 
       const context: GraphQLContext = {
         db,

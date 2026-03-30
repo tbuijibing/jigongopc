@@ -15,3 +15,8 @@ export { heartbeatsApi } from "./heartbeats";
 export { sidebarBadgesApi } from "./sidebarBadges";
 export { membersApi } from "./members";
 export { usersApi } from "./users";
+
+// New Features from Paperclip
+export { companySkillsApi } from "./companySkills";
+export { routinesApi } from "./routines";
+export { pluginsApi } from "./plugins";

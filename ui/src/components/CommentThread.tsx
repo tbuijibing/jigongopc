@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import type { IssueComment, Agent } from "@Jigongai/shared";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, Paperclip } from "lucide-react";
+import { Check, Copy, Paperclip, Trash2 } from "lucide-react";
 import { Identity } from "./Identity";
 import { InlineEntitySelector, type InlineEntityOption } from "./InlineEntitySelector";
 import { MarkdownBody } from "./MarkdownBody";
@@ -34,6 +34,7 @@ interface CommentThreadProps {
   comments: CommentWithRunMeta[];
   linkedRuns?: LinkedRunItem[];
   onAdd: (body: string, reopen?: boolean, reassignment?: CommentReassignment) => Promise<void>;
+  onDelete?: (commentId: string) => Promise<void>;
   issueStatus?: string;
   agentMap?: Map<string, Agent>;
   imageUploadHandler?: (file: File) => Promise<string>;
@@ -121,10 +122,14 @@ const TimelineList = memo(function TimelineList({
   timeline,
   agentMap,
   highlightCommentId,
+  onDelete,
+  currentUserId,
 }: {
   timeline: TimelineItem[];
   agentMap?: Map<string, Agent>;
   highlightCommentId?: string | null;
+  onDelete?: (commentId: string) => Promise<void>;
+  currentUserId?: string | null;
 }) {
   const { t } = useTranslation();
   if (timeline.length === 0) {
@@ -190,6 +195,16 @@ const TimelineList = memo(function TimelineList({
                   {formatDateTime(comment.createdAt)}
                 </a>
                 <CopyMarkdownButton text={comment.body} />
+                {onDelete && !comment.authorUserId && (
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-destructive transition-colors"
+                    title={t("commentThread.deleteComment")}
+                    onClick={() => onDelete(comment.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                )}
               </span>
             </div>
             <MarkdownBody className="text-sm">{comment.body}</MarkdownBody>
@@ -220,6 +235,7 @@ export function CommentThread({
   comments,
   linkedRuns = [],
   onAdd,
+  onDelete,
   issueStatus,
   agentMap,
   imageUploadHandler,
@@ -260,7 +276,7 @@ export function CommentThread({
       run,
     }));
     return [...commentItems, ...runItems].sort((a, b) => {
-      if (a.createdAtMs !== b.createdAtMs) return a.createdAtMs - b.createdAtMs;
+      if (a.createdAtMs !== b.createdAtMs) return b.createdAtMs - a.createdAtMs;
       if (a.kind === b.kind) return a.id.localeCompare(b.id);
       return a.kind === "comment" ? -1 : 1;
     });
@@ -352,97 +368,102 @@ export function CommentThread({
   const canSubmit = !submitting && !!body.trim();
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-semibold">{t("commentThread.title", { count: timeline.length })}</h3>
-
-      <TimelineList timeline={timeline} agentMap={agentMap} highlightCommentId={highlightCommentId} />
+    <div className="relative">
+      <TimelineList
+        timeline={timeline}
+        agentMap={agentMap}
+        highlightCommentId={highlightCommentId}
+        onDelete={onDelete}
+      />
 
       {liveRunSlot}
 
-      <div className="space-y-2">
-        <MarkdownEditor
-          ref={editorRef}
-          value={body}
-          onChange={setBody}
-          placeholder={t("commentThread.placeholder")}
-          mentions={mentions}
-          onSubmit={handleSubmit}
-          imageUploadHandler={imageUploadHandler}
-          contentClassName="min-h-[60px] text-sm"
-        />
-        <div className="flex items-center justify-end gap-3">
-          {onAttachImage && (
-            <div className="mr-auto flex items-center gap-3">
-              <input
-                ref={attachInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                className="hidden"
-                onChange={handleAttachFile}
+      <div className="sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border pt-4 pb-4 mt-6">
+        <div className="space-y-2">
+          <MarkdownEditor
+            ref={editorRef}
+            value={body}
+            onChange={setBody}
+            placeholder={t("commentThread.placeholder")}
+            mentions={mentions}
+            onSubmit={handleSubmit}
+            imageUploadHandler={imageUploadHandler}
+            contentClassName="min-h-[60px] text-sm"
+          />
+          <div className="flex items-center justify-end gap-3">
+            {onAttachImage && (
+              <div className="mr-auto flex items-center gap-3">
+                <input
+                  ref={attachInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handleAttachFile}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => attachInputRef.current?.click()}
+                  disabled={attaching}
+                  title={t("commentThread.attachImage")}
+                >
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+            {isClosed && (
+              <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={reopen}
+                  onChange={(e) => setReopen(e.target.checked)}
+                  className="rounded border-border"
+                />
+                {t("commentThread.reopen")}
+              </label>
+            )}
+            {enableReassign && reassignOptions.length > 0 && (
+              <InlineEntitySelector
+                value={reassignTarget}
+                options={reassignOptions}
+                placeholder={t("commentThread.assignee")}
+                noneLabel={t("issues.noAssignee")}
+                searchPlaceholder={t("issues.searchAssignees")}
+                emptyMessage={t("issues.noAssigneesFound")}
+                onChange={setReassignTarget}
+                className="text-xs h-8"
+                renderTriggerValue={(option) => {
+                  if (!option) return <span className="text-muted-foreground">{t("commentThread.assignee")}</span>;
+                  const agentId = option.id.startsWith("agent:") ? option.id.slice("agent:".length) : null;
+                  const agent = agentId ? agentMap?.get(agentId) : null;
+                  return (
+                    <>
+                      {agent ? (
+                        <AgentIcon icon={agent.icon} className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      ) : null}
+                      <span className="truncate">{option.label}</span>
+                    </>
+                  );
+                }}
+                renderOption={(option) => {
+                  if (!option.id) return <span className="truncate">{option.label}</span>;
+                  const agentId = option.id.startsWith("agent:") ? option.id.slice("agent:".length) : null;
+                  const agent = agentId ? agentMap?.get(agentId) : null;
+                  return (
+                    <>
+                      {agent ? (
+                        <AgentIcon icon={agent.icon} className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      ) : null}
+                      <span className="truncate">{option.label}</span>
+                    </>
+                  );
+                }}
               />
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => attachInputRef.current?.click()}
-                disabled={attaching}
-                title={t("commentThread.attachImage")}
-              >
-                <Paperclip className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-          {isClosed && (
-            <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={reopen}
-                onChange={(e) => setReopen(e.target.checked)}
-                className="rounded border-border"
-              />
-              {t("commentThread.reopen")}
-            </label>
-          )}
-          {enableReassign && reassignOptions.length > 0 && (
-            <InlineEntitySelector
-              value={reassignTarget}
-              options={reassignOptions}
-              placeholder={t("commentThread.assignee")}
-              noneLabel={t("issues.noAssignee")}
-              searchPlaceholder={t("issues.searchAssignees")}
-              emptyMessage={t("issues.noAssigneesFound")}
-              onChange={setReassignTarget}
-              className="text-xs h-8"
-              renderTriggerValue={(option) => {
-                if (!option) return <span className="text-muted-foreground">{t("commentThread.assignee")}</span>;
-                const agentId = option.id.startsWith("agent:") ? option.id.slice("agent:".length) : null;
-                const agent = agentId ? agentMap?.get(agentId) : null;
-                return (
-                  <>
-                    {agent ? (
-                      <AgentIcon icon={agent.icon} className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    ) : null}
-                    <span className="truncate">{option.label}</span>
-                  </>
-                );
-              }}
-              renderOption={(option) => {
-                if (!option.id) return <span className="truncate">{option.label}</span>;
-                const agentId = option.id.startsWith("agent:") ? option.id.slice("agent:".length) : null;
-                const agent = agentId ? agentMap?.get(agentId) : null;
-                return (
-                  <>
-                    {agent ? (
-                      <AgentIcon icon={agent.icon} className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    ) : null}
-                    <span className="truncate">{option.label}</span>
-                  </>
-                );
-              }}
-            />
-          )}
-          <Button size="sm" disabled={!canSubmit} onClick={handleSubmit}>
-            {submitting ? t("commentThread.posting") : t("commentThread.comment")}
-          </Button>
+            )}
+            <Button size="sm" disabled={!canSubmit} onClick={handleSubmit}>
+              {submitting ? t("commentThread.posting") : t("commentThread.comment")}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

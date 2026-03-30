@@ -42,6 +42,27 @@ export { skillSources } from "./skill_sources.js";
 export { issueWatchers } from "./issue_watchers.js";
 export { humanAgentControls } from "./human_agent_controls.js";
 
+// Company Skills Library
+export { companySkills } from "./company_skills.js";
+
+// Routines Engine
+export { routines, routineTriggers, routineRuns } from "./routines.js";
+
+// Company Portability (Import/Export)
+export { companyExports, companyImports } from "./company_portability.js";
+
+// Enhanced Plugin System
+export {
+  plugins,
+  pluginConfig,
+  pluginState,
+  pluginEntities,
+  pluginJobs,
+  pluginJobRuns,
+  pluginWebhookDeliveries,
+  pluginLogs,
+} from "./plugins.js";
+
 // Company Operating Template System
 export {
   companyTemplates,

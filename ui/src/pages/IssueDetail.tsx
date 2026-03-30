@@ -442,6 +442,14 @@ export function IssueDetail() {
     },
   });
 
+  const deleteComment = useMutation({
+    mutationFn: (commentId: string) => issuesApi.deleteComment(issueId!, commentId),
+    onSuccess: () => {
+      invalidateIssue();
+      queryClient.invalidateQueries({ queryKey: queryKeys.issues.comments(issueId!) });
+    },
+  });
+
   const uploadAttachment = useMutation({
     mutationFn: async (file: File) => {
       if (!selectedCompanyId) throw new Error("No company selected");
@@ -788,6 +796,9 @@ export function IssueDetail() {
                 return;
               }
               await addComment.mutateAsync({ body, reopen });
+            }}
+            onDelete={async (commentId: string) => {
+              await deleteComment.mutateAsync(commentId);
             }}
             imageUploadHandler={async (file) => {
               const attachment = await uploadAttachment.mutateAsync(file);

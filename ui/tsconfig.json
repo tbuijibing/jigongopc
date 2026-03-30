@@ -13,7 +13,9 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@jigong/shared": ["../packages/shared/src/index.ts"],
+      "@jigong/db": ["../packages/db/src/index.ts"]
     }
   },
   "include": ["src"]

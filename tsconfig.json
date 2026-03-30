@@ -13,6 +13,21 @@
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "@jigongai/db": ["./packages/db/src/index.ts"],
+      "@jigongai/db/*": ["./packages/db/src/*.ts"],
+      "@jigongai/shared": ["./packages/shared/src/index.ts"],
+      "@jigongai/shared/*": ["./packages/shared/src/*.ts"],
+      "@jigongai/adapter-utils": ["./packages/adapter-utils/src/index.ts"],
+      "@jigongai/adapter-utils/*": ["./packages/adapter-utils/src/*.ts"],
+      "@jigongai/adapter-claude-local": ["./packages/adapters/claude-local/src/index.ts"],
+      "@jigongai/adapter-codex-local": ["./packages/adapters/codex-local/src/index.ts"],
+      "@jigongai/adapter-cursor-local": ["./packages/adapters/cursor-local/src/index.ts"],
+      "@jigongai/adapter-openclaw-gateway": ["./packages/adapters/openclaw-gateway/src/index.ts"],
+      "@jigongai/adapter-opencode-local": ["./packages/adapters/opencode-local/src/index.ts"],
+      "@jigongai/adapter-pi-local": ["./packages/adapters/pi-local/src/index.ts"],
+      "@jigongai/mod-global-collab": ["./modules/global-collab/src/index.ts"]
+    }
   }
 }

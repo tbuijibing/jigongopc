@@ -36,6 +36,11 @@ export function createApolloServer(db: Db): ApolloServer<GraphQLContext> {
         path: error.path,
       };
     },
+    // Disable landing page to avoid uuid dependency issue
+    introspection: true,
+    plugins: [],
+    // Explicitly disable the default landing page plugin
+    stopOnTermination: false,
   });
 
   return server;

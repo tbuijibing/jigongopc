@@ -108,4 +108,17 @@ export const queryKeys = {
       ["templates", "lineage", companyId, templateId] as const,
     creatorRevenue: (companyId: string) => ["templates", "creator-revenue", companyId] as const,
   },
+  companySkills: {
+    list: (companyId: string) => ["company-skills", companyId] as const,
+    detail: (companyId: string, skillId: string) => ["company-skills", companyId, skillId] as const,
+  },
+  routines: {
+    list: (companyId: string) => ["routines", companyId] as const,
+    detail: (companyId: string, routineId: string) => ["routines", companyId, routineId] as const,
+    runs: (companyId: string, routineId: string) => ["routines", companyId, routineId, "runs"] as const,
+  },
+  plugins: {
+    list: (companyId: string) => ["plugins", companyId] as const,
+    detail: (companyId: string, pluginId: string) => ["plugins", companyId, pluginId] as const,
+  },
 };
