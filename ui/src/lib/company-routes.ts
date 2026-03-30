@@ -1,3 +1,17 @@
+/**
+ * Board routes that require a company prefix (e.g., /:companyPrefix/dashboard).
+ *
+ * IMPORTANT: When adding a new board page, you MUST add its root path here.
+ * This ensures the custom router (router.tsx) automatically handles company prefix
+ * for Link, NavLink, Navigate, and useNavigate. Without this, the page will
+ * redirect to dashboard unexpectedly.
+ *
+ * Example: Adding a new "Reports" page at /reports
+ * 1. Add "reports" to this set
+ * 2. Add route in App.tsx boardRoutes(): <Route path="reports" element={<Reports />} />
+ * 3. Use in Sidebar: <SidebarNavItem to="/reports" ... />
+ * The router will automatically resolve /reports to /:companyPrefix/reports
+ */
 const BOARD_ROUTE_ROOTS = new Set([
   "dashboard",
   "companies",
@@ -15,6 +29,7 @@ const BOARD_ROUTE_ROOTS = new Set([
   "company-skills",
   "routines",
   "plugins",
+  "portability",
   "collaboration",
 ]);
 
