@@ -1,0 +1,27 @@
+{
+  "name": "@jigongai/mod-ai-spec-docs",
+  "version": "1.0.0",
+  "description": "AI-Spec 规范驱动开发模块",
+  "type": "module",
+  "main": "./dist/worker.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "opc",
+    "module",
+    "ai-spec",
+    "docspec"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "typescript": "^5.7.3"
+  }
+}

@@ -11,11 +11,13 @@ export function healthRoutes(
     deploymentExposure: DeploymentExposure;
     authReady: boolean;
     companyDeletionEnabled: boolean;
+    docspecServerUrl?: string;
   } = {
     deploymentMode: "local_trusted",
     deploymentExposure: "private",
     authReady: true,
     companyDeletionEnabled: true,
+    docspecServerUrl: undefined,
   },
 ) {
   const router = Router();
@@ -45,6 +47,7 @@ export function healthRoutes(
       features: {
         companyDeletionEnabled: opts.companyDeletionEnabled,
       },
+      docspecServerUrl: opts.docspecServerUrl,
     });
   });
 

@@ -325,7 +325,7 @@ export function templateVersionService(db: Db) {
         version: entry.version,
         semver: parseSemver(entry.version),
         createdAt: entry.createdAt,
-        createdBy: entry.createdBy,
+        createdBy: entry.createdBy ?? "",
         changelog: entry.changeNotes || undefined,
         isLatest: entry.version === latestVersion?.version,
       }));
@@ -350,7 +350,7 @@ export function templateVersionService(db: Db) {
           version: latestLineage.version,
           semver: parseSemver(latestLineage.version),
           createdAt: latestLineage.createdAt,
-          createdBy: latestLineage.createdBy,
+          createdBy: latestLineage.createdBy ?? "",
           changelog: latestLineage.changeNotes || undefined,
           isLatest: true,
         };
@@ -405,7 +405,7 @@ export function templateVersionService(db: Db) {
           version: lineageEntry.version,
           semver: parseSemver(lineageEntry.version),
           createdAt: lineageEntry.createdAt,
-          createdBy: lineageEntry.createdBy,
+          createdBy: lineageEntry.createdBy ?? "",
           changelog: lineageEntry.changeNotes || undefined,
           isLatest: version === latestVersion?.version,
         };
@@ -758,7 +758,7 @@ export function templateVersionService(db: Db) {
             }
           } else {
             // New key in source, keep it
-            target[key] = sourceVal;
+            target[key] = source[key] as never;
           }
         }
 

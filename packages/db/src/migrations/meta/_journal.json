@@ -204,6 +204,20 @@
       "when": 1774886035224,
       "tag": "0028_futuristic_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1774948930483,
+      "tag": "0029_glamorous_titanium_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1774950212920,
+      "tag": "0030_sweet_vapor",
+      "breakpoints": true
     }
   ]
 }

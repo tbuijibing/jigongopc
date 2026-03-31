@@ -20,3 +20,4 @@ export { userRoutes } from "./users.js";
 export { companySkillRoutes } from "./company-skills.js";
 export { routineRoutes } from "./routines.js";
 export { pluginRoutes } from "./plugins.js";
+export { projectAgentRoutes } from "./project-agents.js";

@@ -79,6 +79,19 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
+  modules/ai-spec-docs:
+    dependencies:
+      express:
+        specifier: ^4.21.0
+        version: 4.22.1
+    devDependencies:
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.25
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   modules/global-collab:
     dependencies:
       '@jigongai/db':

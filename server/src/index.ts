@@ -460,6 +460,8 @@ const app = await createApp(db as any, {
   bindHost: config.host,
   authReady,
   companyDeletionEnabled: config.companyDeletionEnabled,
+  docspecServerUrl: config.docspecServerUrl,
+  docspecAdminToken: config.docspecAdminToken,
   betterAuthHandler,
   resolveSession,
 });

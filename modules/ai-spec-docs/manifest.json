@@ -1,0 +1,145 @@
+{
+  "pluginId": "ai-spec-docs",
+  "displayName": "AI-Spec 规范驱动开发",
+  "description": "规范驱动的 AI 开发系统：老项目快速生成规范文件，AI 按规范完成 95% 工作，人类只做监督",
+  "version": "1.2.0",
+  "capabilities": [
+    "companies:read",
+    "companies:create",
+    "agents:read",
+    "agents:create",
+    "issues:read",
+    "issues:comment",
+    "issues:update",
+    "events:subscribe",
+    "http:external"
+  ],
+  "launchers": [
+    {
+      "key": "onboard",
+      "displayName": "新建项目接入",
+      "description": "将老项目接入 DocSpec AI 开发系统",
+      "icon": "📋"
+    }
+  ],
+  "actions": [
+    {
+      "key": "init-project",
+      "description": "初始化项目（创建 OPC 公司 + Agent + 文档目录）"
+    },
+    {
+      "key": "list-projects",
+      "description": "列出已接入的项目"
+    },
+    {
+      "key": "spec-draft",
+      "description": "AI Agent 起草文档并创建 GitLab MR"
+    }
+  ],
+  "tools": [
+    {
+      "key": "spec.list",
+      "description": "列出当前角色可访问的文档",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prefix": { "type": "string", "description": "目录前缀过滤" },
+          "role": { "type": "string", "description": "角色名称（用于权限过滤）" }
+        }
+      }
+    },
+    {
+      "key": "spec.read",
+      "description": "读取指定文档内容",
+      "inputSchema": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string", "description": "文档路径（相对于 spec 仓库根目录）" },
+          "role": { "type": "string", "description": "角色名称（用于权限过滤）" }
+        }
+      }
+    },
+    {
+      "key": "spec.draft",
+      "description": "起草文档变更并创建 GitLab MR 供人工 Review（支持章节标记）",
+      "inputSchema": {
+        "type": "object",
+        "required": ["path", "content"],
+        "properties": {
+          "path":      { "type": "string", "description": "文档路径" },
+          "content":   { "type": "string", "description": "新的文档内容" },
+          "agentName": { "type": "string", "description": "起草者名称" },
+          "assignees": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "GitLab 用户名列表（MR 指派 Review 人）"
+          },
+          "role": { "type": "string", "description": "角色名称（用于权限过滤）" },
+          "autoSection": {
+            "type": "object",
+            "description": "AUTO 区域配置（章节标记）",
+            "properties": {
+              "source": { "type": "string", "description": "数据来源（swagger, vue-router, etc.）" },
+              "startMarker": { "type": "string", "description": "开始标记（可选）" },
+              "endMarker": { "type": "string", "description": "结束标记（可选）" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "key": "spec.search",
+      "description": "在文档中搜索关键词",
+      "inputSchema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": { "type": "string", "description": "搜索关键词" },
+          "role": { "type": "string", "description": "角色名称（用于权限过滤）" }
+        }
+      }
+    },
+    {
+      "key": "spec.update-auto",
+      "description": "CI/CD 自动更新 AUTO 区域（直写 main，无需 MR）",
+      "inputSchema": {
+        "type": "object",
+        "required": ["path", "content", "source"],
+        "properties": {
+          "path": { "type": "string", "description": "文档路径" },
+          "content": { "type": "string", "description": "新的文档内容（不含 AUTO 标记）" },
+          "source": { "type": "string", "description": "数据来源（ci/android, ci/ios, ci/backend, etc.）" },
+          "role": { "type": "string", "description": "角色名称（用于权限验证）" }
+        }
+      }
+    },
+    {
+      "key": "spec.get-template",
+      "description": "获取规范模板（开发规范、代码审查、文档编写等）",
+      "inputSchema": {
+        "type": "object",
+        "required": ["templateType"],
+        "properties": {
+          "templateType": { "type": "string", "description": "模板类型（dev-spec, code-review, doc-writing, test-spec, git-flow, api-design）" },
+          "moduleId": { "type": "string", "description": "模块 ID（可选，用于获取特定模块的规范）" }
+        }
+      }
+    }
+  ],
+  "config": {
+    "docspecServerUrl": {
+      "type": "string",
+      "required": true,
+      "description": "docspec-server 地址，如 http://localhost:4000"
+    },
+    "docspecAdminToken": {
+      "type": "secret",
+      "required": true,
+      "description": "docspec-server 管理员 Token"
+    }
+  },
+  "entrypoints": {
+    "worker": "./dist/worker.js"
+  }
+}

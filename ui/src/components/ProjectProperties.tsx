@@ -7,6 +7,9 @@ import { StatusBadge } from "./StatusBadge";
 import { cn, formatDate } from "../lib/utils";
 import { goalsApi } from "../api/goals";
 import { projectsApi } from "../api/projects";
+import { agentsApi } from "../api/agents";
+import { projectAgentsApi, type ProjectAgentWithDetails } from "../api/project-agents";
+import { workspaceAgentsApi, type WorkspaceAgentWithDetails } from "../api/workspace-agents";
 import { useCompany } from "../context/CompanyContext";
 import { queryKeys } from "../lib/queryKeys";
 import { statusBadge, statusBadgeDefault } from "../lib/status-colors";
@@ -14,8 +17,23 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { ExternalLink, Github, Plus, Trash2, X } from "lucide-react";
+import { ExternalLink, Github, Plus, Trash2, X, User, Shield } from "lucide-react";
 import { ChoosePathButton } from "./PathInstructionsModal";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const PROJECT_STATUSES = [
   { value: "backlog", label: "Backlog" },
@@ -31,6 +49,23 @@ interface ProjectPropertiesProps {
 }
 
 const REPO_ONLY_CWD_SENTINEL = "/__Jigong_repo_only__";
+
+/**
+ * Format GitHub repo URL to a short display name (owner/repo)
+ */
+function formatGitHubRepo(value: string): string {
+  try {
+    const parsed = new URL(value);
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    if (segments.length < 2) return value;
+    const owner = segments[0];
+    const repo = segments[1]?.replace(/\.git$/i, "");
+    if (!owner || !repo) return value;
+    return `${owner}/${repo}`;
+  } catch {
+    return value;
+  }
+}
 
 function PropertyRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -117,6 +152,15 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
 
   const availableGoals = (allGoals ?? []).filter((g) => !linkedGoalIds.includes(g.id));
   const workspaces = project.workspaces ?? [];
+
+  // Agent bindings
+  const { data: agentBindings, isLoading: isLoadingBindings } = useQuery({
+    queryKey: queryKeys.projectAgents.list(project.id),
+    queryFn: () => projectAgentsApi.listByProject(project.id, selectedCompanyId ?? undefined),
+    enabled: !!project.id && !!selectedCompanyId,
+  });
+
+  const [addAgentDialogOpen, setAddAgentDialogOpen] = useState(false);
 
   const invalidateProject = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.projects.detail(project.id) });
@@ -382,43 +426,11 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
           ) : (
             <div className="space-y-1">
               {workspaces.map((workspace) => (
-                <div key={workspace.id} className="space-y-1">
-                  {workspace.cwd && workspace.cwd !== REPO_ONLY_CWD_SENTINEL ? (
-                    <div className="flex items-center justify-between gap-2 py-1">
-                      <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">{workspace.cwd}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => clearLocalWorkspace(workspace)}
-                        aria-label="Delete local folder"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ) : null}
-                  {workspace.repoUrl ? (
-                    <div className="flex items-center justify-between gap-2 py-1">
-                      <a
-                        href={workspace.repoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:underline"
-                      >
-                        <Github className="h-3 w-3 shrink-0" />
-                        <span className="truncate">{formatGitHubRepo(workspace.repoUrl)}</span>
-                        <ExternalLink className="h-3 w-3 shrink-0" />
-                      </a>
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => clearRepoWorkspace(workspace)}
-                        aria-label="Delete workspace repo"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ) : null}
-                </div>
+                <WorkspaceAgentsSection
+                  key={workspace.id}
+                  workspace={workspace}
+                  companyId={selectedCompanyId ?? undefined}
+                />
               ))}
             </div>
           )}
@@ -529,6 +541,68 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
           )}
         </div>
 
+        {/* Agent Bindings Section */}
+        <div className="py-1.5 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span>{t("projects.properties.agents")}</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-border text-[10px] text-muted-foreground hover:text-foreground"
+                    aria-label="Agent bindings help"
+                  >
+                    ?
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  Bind agents to this project with specific roles
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <Dialog open={addAgentDialogOpen} onOpenChange={setAddAgentDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="xs" className="h-6 px-2">
+                  <Plus className="h-3 w-3 mr-1" />
+                  {t("projects.properties.addAgent")}
+                </Button>
+              </DialogTrigger>
+              <AddAgentDialog
+                projectId={project.id}
+                companyId={selectedCompanyId ?? undefined}
+                open={addAgentDialogOpen}
+                onOpenChange={setAddAgentDialogOpen}
+                existingAgentIds={agentBindings?.map((b) => b.agentId) ?? []}
+              />
+            </Dialog>
+          </div>
+          {isLoadingBindings ? (
+            <p className="rounded-md border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
+              {t("common.loading")}
+            </p>
+          ) : agentBindings && agentBindings.length > 0 ? (
+            <div className="space-y-1">
+              {agentBindings.map((binding) => (
+                <AgentBindingRow
+                  key={binding.id}
+                  binding={binding}
+                  projectId={project.id}
+                  companyId={selectedCompanyId ?? undefined}
+                  onUpdate={() => {
+                    queryClient.invalidateQueries({ queryKey: queryKeys.projectAgents.list(project.id) });
+                    invalidateProject();
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-md border border-dashed border-border px-3 py-2 text-sm text-muted-foreground">
+              {t("projects.properties.noAgents")}
+            </p>
+          )}
+        </div>
+
         <Separator />
 
         <PropertyRow label={t("projects.properties.created")}>
@@ -537,6 +611,451 @@ export function ProjectProperties({ project, onUpdate }: ProjectPropertiesProps)
         <PropertyRow label={t("projects.properties.updated")}>
           <span className="text-sm">{formatDate(project.updatedAt)}</span>
         </PropertyRow>
+      </div>
+    </div>
+  );
+}
+
+interface AddAgentDialogProps {
+  projectId: string;
+  companyId?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  existingAgentIds: string[];
+}
+
+function AddAgentDialog({ projectId, companyId, open, onOpenChange, existingAgentIds }: AddAgentDialogProps) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [selectedAgentId, setSelectedAgentId] = useState("");
+  const [selectedRole, setSelectedRole] = useState<"lead" | "member" | "observer">("member");
+
+  const { data: allAgents } = useQuery({
+    queryKey: queryKeys.agents.list(companyId!),
+    queryFn: () => agentsApi.list(companyId!),
+    enabled: !!companyId,
+  });
+
+  const addBinding = useMutation({
+    mutationFn: () => projectAgentsApi.addBinding(projectId, selectedAgentId, selectedRole, companyId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.projectAgents.list(projectId) });
+      setSelectedAgentId("");
+      setSelectedRole("member");
+      onOpenChange(false);
+    },
+  });
+
+  const availableAgents = (allAgents ?? []).filter((a) => !existingAgentIds.includes(a.id));
+
+  const handleSubmit = () => {
+    if (!selectedAgentId) return;
+    addBinding.mutate();
+  };
+
+  return (
+    <DialogContent className="sm:max-w-[400px]">
+      <DialogHeader>
+        <DialogTitle>{t("projects.properties.addAgent")}</DialogTitle>
+      </DialogHeader>
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">{t("projects.properties.selectAgent")}</label>
+          <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+            <SelectTrigger>
+              <SelectValue placeholder={t("projects.properties.selectAgentPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              {availableAgents.length === 0 ? (
+                <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                  {t("projects.properties.noAvailableAgents")}
+                </div>
+              ) : (
+                availableAgents.map((agent) => (
+                  <SelectItem key={agent.id} value={agent.id}>
+                    {agent.name || agent.id.slice(0, 8)}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">{t("projects.properties.role")}</label>
+          <Select value={selectedRole} onValueChange={(v) => setSelectedRole(v as "lead" | "member" | "observer")}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="lead">{t("projects.properties.roles.lead")}</SelectItem>
+              <SelectItem value="member">{t("projects.properties.roles.member")}</SelectItem>
+              <SelectItem value="observer">{t("projects.properties.roles.observer")}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t("common.cancel")}
+          </Button>
+          <Button
+            variant="default"
+            onClick={handleSubmit}
+            disabled={!selectedAgentId || addBinding.isPending}
+          >
+            {t("common.save")}
+          </Button>
+        </div>
+        {addBinding.isError && (
+          <p className="text-sm text-destructive">{t("projects.properties.failedAddAgent")}</p>
+        )}
+      </div>
+    </DialogContent>
+  );
+}
+
+interface AgentBindingRowProps {
+  binding: ProjectAgentWithDetails;
+  projectId: string;
+  companyId?: string;
+  onUpdate: () => void;
+}
+
+function AgentBindingRow({ binding, projectId, companyId, onUpdate }: AgentBindingRowProps) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  const updateRole = useMutation({
+    mutationFn: (role: "lead" | "member" | "observer") =>
+      projectAgentsApi.updateRole(projectId, binding.agentId, role, companyId),
+    onSuccess: onUpdate,
+  });
+
+  const removeBinding = useMutation({
+    mutationFn: () => projectAgentsApi.removeBinding(projectId, binding.agentId, companyId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.projectAgents.list(projectId) });
+      onUpdate();
+    },
+  });
+
+  const roleLabels: Record<"lead" | "member" | "observer", string> = {
+    lead: t("projects.properties.roles.lead"),
+    member: t("projects.properties.roles.member"),
+    observer: t("projects.properties.roles.observer"),
+  };
+
+  return (
+    <div className="flex items-center justify-between gap-2 py-1">
+      <div className="flex items-center gap-2 min-w-0">
+        <Avatar className="h-6 w-6">
+          <AvatarFallback className="text-[10px]">
+            {(binding.agentName || binding.agentId.slice(0, 2)).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <span className="text-sm font-medium truncate block">
+            {binding.agentName || binding.agentId.slice(0, 8)}
+          </span>
+          <span className="text-xs text-muted-foreground truncate block">
+            {binding.agentTitle || binding.agentId}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center gap-1">
+        <Select
+          value={binding.role}
+          onValueChange={(v) => updateRole.mutate(v as "lead" | "member" | "observer")}
+        >
+          <SelectTrigger className="h-7 w-24">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="lead">{roleLabels.lead}</SelectItem>
+            <SelectItem value="member">{roleLabels.member}</SelectItem>
+            <SelectItem value="observer">{roleLabels.observer}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          onClick={() => {
+            if (window.confirm(t("projects.properties.confirmRemoveAgent"))) {
+              removeBinding.mutate();
+            }
+          }}
+          disabled={removeBinding.isPending}
+          aria-label={t("projects.properties.removeAgent")}
+        >
+          <X className="h-3 w-3" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface WorkspaceAgentsSectionProps {
+  workspace: Project["workspaces"][number];
+  companyId?: string;
+}
+
+function WorkspaceAgentsSection({ workspace, companyId }: WorkspaceAgentsSectionProps) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  const { data: bindings, isLoading } = useQuery({
+    queryKey: queryKeys.workspaceAgents.list(workspace.id),
+    queryFn: () => workspaceAgentsApi.listByWorkspace(workspace.id, companyId),
+    enabled: !!workspace.id && !!companyId,
+  });
+
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+
+  const existingAgentIds = (bindings ?? []).map((b) => b.agentId);
+
+  return (
+    <div className="rounded-md border border-border p-2 space-y-2">
+      <div className="space-y-1">
+        {workspace.cwd && workspace.cwd !== REPO_ONLY_CWD_SENTINEL ? (
+          <div className="flex items-center justify-between gap-2 py-1">
+            <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">{workspace.cwd}</span>
+          </div>
+        ) : null}
+        {workspace.repoUrl ? (
+          <div className="flex items-center justify-between gap-2 py-1">
+            <a
+              href={workspace.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              <Github className="h-3 w-3 shrink-0" />
+              <span className="truncate">{formatGitHubRepo(workspace.repoUrl)}</span>
+              <ExternalLink className="h-3 w-3 shrink-0" />
+            </a>
+          </div>
+        ) : null}
+      </div>
+
+      <Separator className="my-2" />
+
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">{t("projects.properties.agents")}</span>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          className="h-5 w-5"
+          onClick={() => setAddDialogOpen(true)}
+          aria-label={t("projects.properties.addAgent")}
+        >
+          <Plus className="h-3 w-3" />
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="text-xs text-muted-foreground">{t("common.loading")}</div>
+      ) : bindings && bindings.length > 0 ? (
+        <div className="space-y-1">
+          {bindings.map((binding) => (
+            <WorkspaceAgentBindingRow
+              key={binding.id}
+              binding={binding}
+              workspaceId={workspace.id}
+              companyId={companyId}
+              onUpdate={() => {
+                queryClient.invalidateQueries({ queryKey: queryKeys.workspaceAgents.list(workspace.id) });
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-xs text-muted-foreground">{t("projects.properties.noAgents")}</div>
+      )}
+
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <AddWorkspaceAgentDialog
+          workspaceId={workspace.id}
+          companyId={companyId}
+          open={addDialogOpen}
+          onOpenChange={setAddDialogOpen}
+          existingAgentIds={existingAgentIds}
+        />
+      </Dialog>
+    </div>
+  );
+}
+
+interface AddWorkspaceAgentDialogProps {
+  workspaceId: string;
+  companyId?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  existingAgentIds: string[];
+}
+
+function AddWorkspaceAgentDialog({ workspaceId, companyId, open, onOpenChange, existingAgentIds }: AddWorkspaceAgentDialogProps) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [selectedAgentId, setSelectedAgentId] = useState("");
+  const [selectedRole, setSelectedRole] = useState<"lead" | "member" | "observer">("member");
+
+  const { data: allAgents } = useQuery({
+    queryKey: queryKeys.agents.list(companyId!),
+    queryFn: () => agentsApi.list(companyId!),
+    enabled: !!companyId,
+  });
+
+  const addBinding = useMutation({
+    mutationFn: () => workspaceAgentsApi.addBinding(workspaceId, selectedAgentId, selectedRole, companyId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceAgents.list(workspaceId) });
+      setSelectedAgentId("");
+      setSelectedRole("member");
+      onOpenChange(false);
+    },
+  });
+
+  const availableAgents = (allAgents ?? []).filter((a) => !existingAgentIds.includes(a.id));
+
+  const handleSubmit = () => {
+    if (!selectedAgentId) return;
+    addBinding.mutate();
+  };
+
+  return (
+    <DialogContent className="sm:max-w-[400px]">
+      <DialogHeader>
+        <DialogTitle>{t("projects.properties.addAgent")}</DialogTitle>
+      </DialogHeader>
+      <div className="space-y-4 py-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">{t("projects.properties.selectAgent")}</label>
+          <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+            <SelectTrigger>
+              <SelectValue placeholder={t("projects.properties.selectAgentPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              {availableAgents.length === 0 ? (
+                <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                  {t("projects.properties.noAvailableAgents")}
+                </div>
+              ) : (
+                availableAgents.map((agent) => (
+                  <SelectItem key={agent.id} value={agent.id}>
+                    {agent.name || agent.id.slice(0, 8)}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">{t("projects.properties.role")}</label>
+          <Select value={selectedRole} onValueChange={(v) => setSelectedRole(v as "lead" | "member" | "observer")}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="lead">{t("projects.properties.roles.lead")}</SelectItem>
+              <SelectItem value="member">{t("projects.properties.roles.member")}</SelectItem>
+              <SelectItem value="observer">{t("projects.properties.roles.observer")}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t("common.cancel")}
+          </Button>
+          <Button
+            variant="default"
+            onClick={handleSubmit}
+            disabled={!selectedAgentId || addBinding.isPending}
+          >
+            {t("common.save")}
+          </Button>
+        </div>
+        {addBinding.isError && (
+          <p className="text-sm text-destructive">{t("projects.properties.failedAddAgent")}</p>
+        )}
+      </div>
+    </DialogContent>
+  );
+}
+
+interface WorkspaceAgentBindingRowProps {
+  binding: WorkspaceAgentWithDetails;
+  workspaceId: string;
+  companyId?: string;
+  onUpdate: () => void;
+}
+
+function WorkspaceAgentBindingRow({ binding, workspaceId, companyId, onUpdate }: WorkspaceAgentBindingRowProps) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
+  const updateRole = useMutation({
+    mutationFn: (role: "lead" | "member" | "observer") =>
+      workspaceAgentsApi.updateRole(workspaceId, binding.agentId, role, companyId),
+    onSuccess: onUpdate,
+  });
+
+  const removeBinding = useMutation({
+    mutationFn: () => workspaceAgentsApi.removeBinding(workspaceId, binding.agentId, companyId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceAgents.list(workspaceId) });
+      onUpdate();
+    },
+  });
+
+  const roleLabels: Record<"lead" | "member" | "observer", string> = {
+    lead: t("projects.properties.roles.lead"),
+    member: t("projects.properties.roles.member"),
+    observer: t("projects.properties.roles.observer"),
+  };
+
+  return (
+    <div className="flex items-center justify-between gap-2 py-1">
+      <div className="flex items-center gap-2 min-w-0">
+        <Avatar className="h-6 w-6">
+          <AvatarFallback className="text-[10px]">
+            {(binding.agentName || binding.agentId.slice(0, 2)).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <span className="text-sm font-medium truncate block">
+            {binding.agentName || binding.agentId.slice(0, 8)}
+          </span>
+          <span className="text-xs text-muted-foreground truncate block">
+            {binding.agentTitle || binding.agentId}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center gap-1">
+        <Select
+          value={binding.role}
+          onValueChange={(v) => updateRole.mutate(v as "lead" | "member" | "observer")}
+        >
+          <SelectTrigger className="h-7 w-24">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="lead">{roleLabels.lead}</SelectItem>
+            <SelectItem value="member">{roleLabels.member}</SelectItem>
+            <SelectItem value="observer">{roleLabels.observer}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          onClick={() => {
+            if (window.confirm(t("projects.properties.confirmRemoveAgent"))) {
+              removeBinding.mutate();
+            }
+          }}
+          disabled={removeBinding.isPending}
+          aria-label={t("projects.properties.removeAgent")}
+        >
+          <X className="h-3 w-3" />
+        </Button>
       </div>
     </div>
   );

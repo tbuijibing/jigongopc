@@ -392,7 +392,7 @@ function rowToPluginConfig(row: typeof pluginConfig.$inferSelect): PluginConfigT
     pluginId: row.pluginId,
     configKey: row.configKey,
     configValue: row.configValue as PluginConfigType["configValue"],
-    isSecret: row.isSecret,
+    isSecret: row.isSecret ?? false,
     updatedAt: row.updatedAt.toISOString(),
   };
 }
@@ -427,7 +427,7 @@ function rowToPluginJob(row: typeof pluginJobs.$inferSelect): PluginJob {
     pluginId: row.pluginId,
     jobType: row.jobType,
     jobStatus: row.jobStatus as PluginJob["jobStatus"],
-    priority: row.priority,
+    priority: row.priority ?? 0,
     payload: row.payload as PluginJob["payload"],
     result: row.result as PluginJob["result"],
     error: row.error,

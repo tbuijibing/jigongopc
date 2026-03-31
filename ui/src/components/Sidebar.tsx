@@ -1,4 +1,5 @@
 import {
+  FileText,
   Inbox,
   CircleDot,
   Target,
@@ -100,6 +101,7 @@ export function Sidebar() {
           <SidebarNavItem to="/issues" label={t("nav.issues")} icon={CircleDot} />
           <SidebarNavItem to="/goals" label={t("nav.goals")} icon={Target} />
           <SidebarNavItem to="/skills" label="Skills" icon={Sparkles} />
+          <SidebarNavItem to="/spec-docs" label="AI 规范文档" icon={FileText} />
         </SidebarSection>
 
         <SidebarProjects />

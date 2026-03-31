@@ -87,6 +87,11 @@ export const secretsLocalEncryptedConfigSchema = z.object({
   keyFilePath: z.string().default("~/.Jigong/instances/default/secrets/master.key"),
 });
 
+export const docspecConfigSchema = z.object({
+  serverUrl: z.string().url().optional(),
+  adminToken: z.string().optional(),
+});
+
 export const secretsConfigSchema = z.object({
   provider: z.enum(SECRET_PROVIDERS).default("local_encrypted"),
   strictMode: z.boolean().default(false),
@@ -125,6 +130,7 @@ export const JigongConfigSchema = z
         keyFilePath: "~/.Jigong/instances/default/secrets/master.key",
       },
     }),
+    docspec: docspecConfigSchema.optional(),
   })
   .superRefine((value, ctx) => {
     if (value.server.deploymentMode === "local_trusted") {
@@ -176,3 +182,4 @@ export type SecretsLocalEncryptedConfig = z.infer<typeof secretsLocalEncryptedCo
 export type AuthConfig = z.infer<typeof authConfigSchema>;
 export type ConfigMeta = z.infer<typeof configMetaSchema>;
 export type DatabaseBackupConfig = z.infer<typeof databaseBackupConfigSchema>;
+export type DocspecConfig = z.infer<typeof docspecConfigSchema>;

@@ -134,7 +134,8 @@ export function templateEngineService(db: Db) {
       let coreData = pkg.core.data;
       if (pkg.core.encrypted && pkg.core.encryptedData) {
         // TODO: Implement actual decryption
-        coreData = await this.decryptCore(pkg.core.encryptedData, template.encryptionConfig);
+        // coreData = await decryptCore(pkg.core.encryptedData, template.encryptionConfig);
+        // Encrypted core not yet supported
       }
 
       // Merge variables
@@ -244,8 +245,8 @@ export function templateEngineService(db: Db) {
             templateId: template.id,
             code: workflow.code,
             name: workflow.name,
-            description: workflow.description,
-            definition: workflow.definition,
+            description: workflow.description ?? null,
+            definition: workflow.definition as typeof templateWorkflows.$inferInsert["definition"],
           });
         }
       }
@@ -262,8 +263,8 @@ export function templateEngineService(db: Db) {
           templateId: template.id,
           code: role.code,
           name: role.name,
-          description: role.description,
-          definition: role.definition,
+          description: role.description ?? null,
+          definition: role.definition as typeof templateRoles.$inferInsert["definition"],
         });
       }
 

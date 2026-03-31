@@ -22,10 +22,7 @@ import {
   resolveHomeAwarePath,
 } from "./home-paths.js";
 
-const Jigong_ENV_FILE_PATH = resolveJiGongEnvPath();
-if (existsSync(Jigong_ENV_FILE_PATH)) {
-  loadDotenv({ path: Jigong_ENV_FILE_PATH, override: false, quiet: true });
-}
+// .env file is loaded lazily in loadConfig() to ensure the path resolution is up-to-date
 
 type DatabaseMode = "embedded-postgres" | "postgres";
 
@@ -61,9 +58,24 @@ export interface Config {
   heartbeatSchedulerEnabled: boolean;
   heartbeatSchedulerIntervalMs: number;
   companyDeletionEnabled: boolean;
+  docspecServerUrl: string | undefined;
+  docspecAdminToken: string | undefined;
 }
 
 export function loadConfig(): Config {
+  // Load .env file lazily at config load time to ensure path resolution is up-to-date
+  const Jigong_ENV_FILE_PATH = resolveJiGongEnvPath();
+  console.log("[config] Jigong_ENV_FILE_PATH:", Jigong_ENV_FILE_PATH);
+  console.log("[config] Jigong_ENV_FILE_PATH exists:", existsSync(Jigong_ENV_FILE_PATH));
+  if (existsSync(Jigong_ENV_FILE_PATH)) {
+    console.log("[config] Loading .env file...");
+    loadDotenv({ path: Jigong_ENV_FILE_PATH, override: false, quiet: true });
+    console.log("[config] After loadDotenv - DOCSPEC_SERVER_URL:", process.env.DOCSPEC_SERVER_URL ? "SET" : "UNDEFINED");
+    console.log("[config] After loadDotenv - DOCSPEC_ADMIN_TOKEN:", process.env.DOCSPEC_ADMIN_TOKEN ? "SET" : "UNDEFINED");
+  } else {
+    console.log("[config] .env file NOT found");
+  }
+
   const fileConfig = readConfigFile();
   const fileDatabaseMode =
     (fileConfig?.database.mode === "postgres" ? "postgres" : "embedded-postgres") as DatabaseMode;
@@ -179,6 +191,8 @@ export function loadConfig(): Config {
     companyDeletionEnvRaw !== undefined
       ? companyDeletionEnvRaw === "true"
       : deploymentMode === "local_trusted";
+  const docspecServerUrl = process.env.DOCSPEC_SERVER_URL ?? fileConfig?.docspec?.serverUrl;
+  const docspecAdminToken = process.env.DOCSPEC_ADMIN_TOKEN ?? fileConfig?.docspec?.adminToken;
   const databaseBackupEnabled =
     process.env.Jigong_DB_BACKUP_ENABLED !== undefined
       ? process.env.Jigong_DB_BACKUP_ENABLED === "true"
@@ -243,5 +257,7 @@ export function loadConfig(): Config {
     heartbeatSchedulerEnabled: process.env.HEARTBEAT_SCHEDULER_ENABLED !== "false",
     heartbeatSchedulerIntervalMs: Math.max(10000, Number(process.env.HEARTBEAT_SCHEDULER_INTERVAL_MS) || 30000),
     companyDeletionEnabled,
+    docspecServerUrl,
+    docspecAdminToken,
   };
 }

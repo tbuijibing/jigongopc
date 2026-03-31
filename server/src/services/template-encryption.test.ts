@@ -17,7 +17,7 @@ import {
   type Layer,
   type EncryptedPackage,
   type TemplatePackage,
-} from "./template-encryption";
+} from "./template-encryption.js";
 
 describe("Template Encryption Service", () => {
   describe("AES-256-GCM Encryption/Decryption", () => {

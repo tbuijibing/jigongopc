@@ -33,6 +33,8 @@ import { graphqlRoutes } from "./routes/graphql.js";
 import { companySkillRoutes } from "./routes/company-skills.js";
 import { routineRoutes } from "./routes/routines.js";
 import { pluginRoutes } from "./routes/plugins.js";
+import { projectAgentRoutes } from "./routes/project-agents.js";
+import { workspaceAgentRoutes } from "./routes/workspace-agents.js";
 import type { BetterAuthSessionResult } from "./auth/better-auth.js";
 import { loadModules } from "./modules/loader.js";
 
@@ -49,6 +51,8 @@ export async function createApp(
     bindHost: string;
     authReady: boolean;
     companyDeletionEnabled: boolean;
+    docspecServerUrl?: string;
+    docspecAdminToken?: string;
     betterAuthHandler?: express.RequestHandler;
     resolveSession?: (req: ExpressRequest) => Promise<BetterAuthSessionResult | null>;
   },
@@ -108,6 +112,7 @@ export async function createApp(
       deploymentExposure: opts.deploymentExposure,
       authReady: opts.authReady,
       companyDeletionEnabled: opts.companyDeletionEnabled,
+      docspecServerUrl: opts.docspecServerUrl,
     }),
   );
   api.use("/companies", companyRoutes(db));
@@ -131,6 +136,8 @@ export async function createApp(
   api.use(companySkillRoutes(db));
   api.use(routineRoutes(db));
   api.use(pluginRoutes(db));
+  api.use(projectAgentRoutes(db));
+  api.use(workspaceAgentRoutes(db));
   api.use(
     accessRoutes(db, {
       deploymentMode: opts.deploymentMode,
@@ -142,7 +149,10 @@ export async function createApp(
   app.use("/api", api);
 
   // Mount module routes (e.g. global-collab → /api/modules/global-collab/)
-  const modulesRouter = await loadModules(db);
+  const modulesRouter = await loadModules(db, {
+    docspecServerUrl: opts.docspecServerUrl,
+    docspecAdminToken: opts.docspecAdminToken,
+  });
   app.use("/api/modules", modulesRouter);
 
   app.use("/api", (_req, res) => {

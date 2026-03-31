@@ -126,7 +126,7 @@ function loadModule(
  * Load all known modules and return a router that mounts them
  * under /api/modules/<moduleId>/.
  */
-export async function loadModules(db: Db): Promise<Router> {
+export async function loadModules(db: Db, opts?: { docspecServerUrl?: string; docspecAdminToken?: string }): Promise<Router> {
   const modulesRouter = Router();
 
   // ── global-collab ─────────────────────────────────────────────────────
@@ -162,6 +162,45 @@ export async function loadModules(db: Db): Promise<Router> {
     }
   } catch (err) {
     pinoLogger.warn({ err }, "Failed to load global-collab module; skipping");
+  }
+
+  // ── ai-spec-docs ─────────────────────────────────────────────────────
+  try {
+    const aiSpecDocsMod = await import("@jigongai/mod-ai-spec-docs");
+    const registerFn = aiSpecDocsMod.default as RegisterFn;
+    pinoLogger.info("[loader] ai-spec-docs config from opts:", {
+      docspecServerUrl: opts?.docspecServerUrl ? "SET" : "UNDEFINED",
+      docspecAdminToken: opts?.docspecAdminToken ? "SET" : "UNDEFINED",
+    });
+    const mod = loadModule("ai-spec-docs", registerFn, db, {
+      enabled: true,
+      docspecServerUrl: opts?.docspecServerUrl,
+      docspecAdminToken: opts?.docspecAdminToken,
+    });
+    if (mod.router) {
+      modulesRouter.use("/ai-spec-docs", (req, _res, next) => {
+        const actor = req.actor;
+        if (actor.type === "board" && actor.userId) {
+          if (!req.headers["x-user-id"]) {
+            req.headers["x-user-id"] = actor.userId;
+          }
+          if (!req.headers["x-company-id"] && actor.companyIds?.[0]) {
+            req.headers["x-company-id"] = actor.companyIds[0];
+          }
+        } else if (actor.type === "agent" && actor.agentId && actor.companyId) {
+          if (!req.headers["x-user-id"]) {
+            req.headers["x-user-id"] = actor.agentId;
+          }
+          if (!req.headers["x-company-id"]) {
+            req.headers["x-company-id"] = actor.companyId;
+          }
+        }
+        next();
+      }, mod.router);
+      pinoLogger.info("Module mounted: ai-spec-docs → /api/modules/ai-spec-docs");
+    }
+  } catch (err) {
+    pinoLogger.warn({ err }, "Failed to load ai-spec-docs module; skipping");
   }
 
   return modulesRouter;

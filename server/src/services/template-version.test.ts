@@ -6,8 +6,9 @@ import {
   templateVersionService,
   type SemverParts,
   type VersionDiff,
-} from "./template-version";
-import { createTestDb } from "@jigongai/db/test";
+} from "./template-version.js";
+import type { Db } from "@jigongai/db";
+import * as schema from "@jigongai/db/schema";
 
 describe("Template Version Service", () => {
   describe("Version Validation", () => {
@@ -179,14 +180,19 @@ describe("Template Version Service", () => {
   });
 
   describe("Template Version Service with Database", () => {
-    let db: ReturnType<typeof createTestDb>;
+    let db: Db;
     let service: ReturnType<typeof templateVersionService>;
     let companyId: string;
     let templateId: string;
     let userId: string;
 
     beforeEach(async () => {
-      db = createTestDb();
+      // Use in-memory PGlite for testing
+      const { PGlite } = await import("@electric-sql/pglite");
+      const { drizzle } = await import("drizzle-orm/pglite");
+      const dbInstance = new PGlite();
+      await dbInstance.waitReady;
+      db = drizzle(dbInstance, { schema });
       service = templateVersionService(db);
       userId = "user-1";
 

@@ -39,6 +39,7 @@ import { CompanySkills } from "./pages/CompanySkills";
 import { Routines } from "./pages/Routines";
 import { Plugins } from "./pages/Plugins";
 import { CompanyPortability } from "./pages/CompanyPortability";
+import { SpecDocs } from "./pages/SpecDocs";
 import { queryKeys } from "./lib/queryKeys";
 import { useCompany } from "./context/CompanyContext";
 import { useDialog } from "./context/DialogContext";
@@ -146,6 +147,7 @@ function boardRoutes() {
       <Route path="company-skills" element={<CompanySkills />} />
       <Route path="routines" element={<Routines />} />
       <Route path="plugins" element={<Plugins />} />
+      <Route path="spec-docs" element={<SpecDocs />} />
       <Route path="portability" element={<CompanyPortability />} />
       <Route path="profile" element={<UserProfile />} />
       <Route path="templates" element={<TemplateStore />} />
@@ -246,6 +248,7 @@ export function App() {
           <Route path="agents/:agentId/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="agents/:agentId/runs/:runId" element={<UnprefixedBoardRedirect />} />
           <Route path="skills" element={<UnprefixedBoardRedirect />} />
+          <Route path="spec-docs" element={<UnprefixedBoardRedirect />} />
           <Route path="profile" element={<UnprefixedBoardRedirect />} />
           <Route path="portability" element={<UnprefixedBoardRedirect />} />
           <Route path="projects" element={<UnprefixedBoardRedirect />} />

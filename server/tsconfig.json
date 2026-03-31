@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
+    "skipLibCheck": true,
     "paths": {
       "@jigongai/db": ["../packages/db/src/index.ts"],
       "@jigongai/db/*": ["../packages/db/src/*.ts"],
@@ -16,9 +17,10 @@
       "@jigongai/adapter-openclaw-gateway": ["../packages/adapters/openclaw-gateway/src/index.ts"],
       "@jigongai/adapter-opencode-local": ["../packages/adapters/opencode-local/src/index.ts"],
       "@jigongai/adapter-pi-local": ["../packages/adapters/pi-local/src/index.ts"],
-      "@jigongai/mod-global-collab": ["../modules/global-collab/src/index.ts"]
+      "@jigongai/mod-global-collab": ["../modules/global-collab/src/index.ts"],
+      "@jigongai/mod-ai-spec-docs": ["../modules/ai-spec-docs/src/worker.ts"]
     }
   },
   "include": ["src"],
-  "exclude": ["src/__tests__"]
+  "exclude": ["src/**/*.test.ts", "src/__tests__"]
 }

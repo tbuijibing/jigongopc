@@ -833,7 +833,22 @@
       "repoUrlError": "Repo workspace must use a valid GitHub repo URL.",
       "failedSaveWorkspace": "Failed to save workspace.",
       "failedDeleteWorkspace": "Failed to delete workspace.",
-      "failedUpdateWorkspace": "Failed to update workspace."
+      "failedUpdateWorkspace": "Failed to update workspace.",
+      "agents": "Agent Bindings",
+      "addAgent": "Add Agent",
+      "noAgents": "No agents bound.",
+      "selectAgent": "Select Agent",
+      "selectAgentPlaceholder": "Select an agent...",
+      "noAvailableAgents": "No available agents.",
+      "role": "Role",
+      "roles": {
+        "lead": "Lead",
+        "member": "Member",
+        "observer": "Observer"
+      },
+      "confirmRemoveAgent": "Are you sure you want to remove this agent binding?",
+      "removeAgent": "Remove Agent",
+      "failedAddAgent": "Failed to add agent."
     }
   },
   "auth": {

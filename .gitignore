@@ -40,6 +40,24 @@ server/src/**/*.d.ts
 server/src/**/*.d.ts.map
 tmp/
 
+# TypeScript compiled outputs in src directories
+modules/*/src/**/*.js
+modules/*/src/**/*.js.map
+modules/*/src/**/*.d.ts
+modules/*/src/**/*.d.ts.map
+modules/*/src/seed/**/*.js
+modules/*/src/seed/**/*.js.map
+modules/*/src/seed/**/*.d.ts
+modules/*/src/seed/**/*.d.ts.map
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+packages/adapters/*/src/**/*.js
+packages/adapters/*/src/**/*.js.map
+packages/adapters/*/src/**/*.d.ts
+packages/adapters/*/src/**/*.d.ts.map
+
 # Editor / tool temp files
 *.tmp
 .vscode/

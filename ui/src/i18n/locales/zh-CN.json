@@ -857,7 +857,22 @@
       "repoUrlError": "仓库工作区必须使用有效的 GitHub 仓库 URL。",
       "failedSaveWorkspace": "保存工作区失败。",
       "failedDeleteWorkspace": "删除工作区失败。",
-      "failedUpdateWorkspace": "更新工作区失败。"
+      "failedUpdateWorkspace": "更新工作区失败。",
+      "agents": "代理绑定",
+      "addAgent": "添加代理",
+      "noAgents": "未绑定代理。",
+      "selectAgent": "选择代理",
+      "selectAgentPlaceholder": "选择一个代理...",
+      "noAvailableAgents": "没有可用的代理。",
+      "role": "角色",
+      "roles": {
+        "lead": "负责人",
+        "member": "成员",
+        "observer": "观察者"
+      },
+      "confirmRemoveAgent": "确定要移除此代理绑定吗？",
+      "removeAgent": "移除代理",
+      "failedAddAgent": "添加代理失败。"
     }
   },
   "auth": {

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { resolveDefaultConfigPath } from "./home-paths.js";
 
 const Jigong_CONFIG_BASENAME = "config.json";
@@ -30,5 +31,21 @@ export function resolveJiGongConfigPath(overridePath?: string): string {
 }
 
 export function resolveJiGongEnvPath(overrideConfigPath?: string): string {
-  return path.resolve(path.dirname(resolveJiGongConfigPath(overrideConfigPath)), Jigong_ENV_FILENAME);
+  // First, check if there's a .env file in the project root
+  // Since server code runs from server/ directory, we need to check parent directory
+  const projectRootEnv = path.resolve(process.cwd(), "..", Jigong_ENV_FILENAME);
+  if (fs.existsSync(projectRootEnv)) {
+    return projectRootEnv;
+  }
+  
+  // Also check current working directory for .env file
+  const cwdEnv = path.resolve(process.cwd(), Jigong_ENV_FILENAME);
+  if (fs.existsSync(cwdEnv)) {
+    return cwdEnv;
+  }
+  
+  // Fall back to the config directory location
+  const configPath = resolveJiGongConfigPath(overrideConfigPath);
+  const configDir = path.dirname(configPath);
+  return path.resolve(configDir, Jigong_ENV_FILENAME);
 }

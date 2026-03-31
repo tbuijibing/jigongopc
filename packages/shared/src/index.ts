@@ -291,6 +291,7 @@ export {
   storageLocalDiskConfigSchema,
   storageS3ConfigSchema,
   secretsLocalEncryptedConfigSchema,
+  docspecConfigSchema,
   type JiGongConfig,
   type LlmConfig,
   type DatabaseBackupConfig,
@@ -304,4 +305,5 @@ export {
   type SecretsConfig,
   type SecretsLocalEncryptedConfig,
   type ConfigMeta,
+  type DocspecConfig,
 } from "./config-schema.js";
